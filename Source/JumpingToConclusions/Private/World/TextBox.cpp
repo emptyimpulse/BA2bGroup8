@@ -11,14 +11,23 @@ ATextBox::ATextBox()
 	PrimaryActorTick.bCanEverTick = true;
 
 	ReplicatedVar = 100.0f;
-	bReplicates = true;
 }
 
 // Called when the game starts or when spawned
 void ATextBox::BeginPlay()
 {
 	Super::BeginPlay();
+	SetReplicates(true);
 	SetReplicateMovement(true);
+
+	if (HasAuthority())
+	{
+		GetWorld()->GetTimerManager().SetTimer(
+			TestTimer,
+			this,
+			&ATextBox::DecreaseReplicatedVar
+			,2.0f, false);
+	}
 }
 
 // Called every frame
@@ -26,15 +35,16 @@ void ATextBox::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if(HasAuthority())
+	/*if(HasAuthority())
 	{
 		GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::Red,"Server");
 	}
 	else
 	{
 		GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::Green,"Client");
-	}
+	}*/
 }
+
 
 void ATextBox::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
@@ -42,4 +52,36 @@ void ATextBox::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetime
 
 	DOREPLIFETIME(ATextBox,ReplicatedVar)
 }
+
+void ATextBox::OnRep_ReplicatedVar()
+{
+	if(HasAuthority())
+	{
+		FVector NewLocation = GetActorLocation() + FVector(0.0f,0.0f,200.0f);
+		SetActorLocation(NewLocation);
+		
+		GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::Red,"Server: OnRep_ReplicatedVar");
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::Green,FString::Printf(TEXT("Client %d: OnRep_ReplicatedVar"), GPlayInEditorID));
+	}
+}
+void ATextBox::DecreaseReplicatedVar()
+{
+	if (HasAuthority())
+	{
+		ReplicatedVar -= 1.0f;
+		OnRep_ReplicatedVar();
+		if (ReplicatedVar > 0.0f)
+		{
+			GetWorld()->GetTimerManager().SetTimer(
+			TestTimer,
+			this,
+			&ATextBox::DecreaseReplicatedVar
+			,2.0f, false);
+		}
+	}
+}
+
 
