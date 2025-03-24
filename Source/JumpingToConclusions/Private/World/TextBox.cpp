@@ -2,6 +2,8 @@
 
 
 #include "World/TextBox.h"
+
+#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
 // Sets default values
@@ -25,7 +27,7 @@ void ATextBox::BeginPlay()
 		GetWorld()->GetTimerManager().SetTimer(
 			TestTimer,
 			this,
-			&ATextBox::DecreaseReplicatedVar
+			&ATextBox::MulticastRPCExplode
 			,2.0f, false);
 	}
 }
@@ -60,11 +62,11 @@ void ATextBox::OnRep_ReplicatedVar()
 		FVector NewLocation = GetActorLocation() + FVector(0.0f,0.0f,200.0f);
 		SetActorLocation(NewLocation);
 		
-		GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::Red,"Server: OnRep_ReplicatedVar");
+		//GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::Red,"Server: OnRep_ReplicatedVar");
 	}
 	else
 	{
-		GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::Green,FString::Printf(TEXT("Client %d: OnRep_ReplicatedVar"), GPlayInEditorID));
+		//GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::Green,FString::Printf(TEXT("Client %d: OnRep_ReplicatedVar"), GPlayInEditorID));
 	}
 }
 void ATextBox::DecreaseReplicatedVar()
@@ -81,6 +83,37 @@ void ATextBox::DecreaseReplicatedVar()
 			&ATextBox::DecreaseReplicatedVar
 			,2.0f, false);
 		}
+	}
+}
+
+void ATextBox::MulticastRPCExplode_Implementation()
+{
+	if (HasAuthority())
+	{
+		GEngine->AddOnScreenDebugMessage(-1,3.0f,FColor::Red,
+	"Server: MulticastRPCElxplode_Implementation");
+		GetWorld()->GetTimerManager().SetTimer(
+		TestTimer,
+		this,
+		&ATextBox::MulticastRPCExplode
+		,2.0f,
+		false);
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1,3.0f,FColor::Green,
+	"Client: ServerRPCFunction_Implementation");
+	}
+
+	if (!IsRunningDedicatedServer())
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(
+			GetWorld(),
+			ExplosionEffect,
+			GetActorLocation(),
+			FRotator::ZeroRotator,
+			true,
+			EPSCPoolMethod::AutoRelease);
 	}
 }
 

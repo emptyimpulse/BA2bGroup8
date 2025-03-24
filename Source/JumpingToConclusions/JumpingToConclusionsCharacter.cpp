@@ -10,6 +10,8 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "Engine/StaticMeshActor.h"
+#include "Net/UnrealNetwork.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -59,6 +61,8 @@ void AJumpingToConclusionsCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 }
+
+
 
 //////////////////////////////////////////////////////////////////////////
 // Input
@@ -127,4 +131,52 @@ void AJumpingToConclusionsCharacter::Look(const FInputActionValue& Value)
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
+}
+
+//Server RPC Implementation, can be called by the client.
+void AJumpingToConclusionsCharacter::ServerRPCFunction_Implementation(int MyArg)
+{
+	if(HasAuthority())
+	{
+#if 1
+		GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::Red,
+			"Server: ServerRPCFunction_Implementation");
+		
+		GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::Red,
+			FString::Printf(TEXT("MyArg: %d"), MyArg));
+#endif
+		
+		if (!SphereMesh)
+		{
+			return;
+		}
+
+		AStaticMeshActor* StaticMeshActor = GetWorld()->SpawnActor<AStaticMeshActor>(AStaticMeshActor::StaticClass());
+		if (StaticMeshActor)
+		{
+			StaticMeshActor->SetReplicates(true);
+			StaticMeshActor->SetReplicateMovement(true);
+			StaticMeshActor->SetMobility(EComponentMobility::Movable);
+			FVector SpawnLocation = GetActorLocation() + GetActorRotation().Vector() * 100.0f + GetActorUpVector() * 50.0f;
+			StaticMeshActor->SetActorLocation(SpawnLocation);
+			
+			UStaticMeshComponent* StaticMeshComponent =  StaticMeshActor->GetStaticMeshComponent();
+			//Spheremesh check obsolete 
+			if (StaticMeshComponent && SphereMesh)
+			{
+				StaticMeshComponent->SetIsReplicated(true);
+				StaticMeshComponent->SetSimulatePhysics(true);
+				StaticMeshComponent->SetStaticMesh(SphereMesh);
+			}
+		}
+	}
+}
+bool AJumpingToConclusionsCharacter::ServerRPCFunction_Validate(int MyArg)
+{
+	if (MyArg >= 0 && MyArg <=100)
+	{
+		return true;
+	}
+	
+	return false;
 }

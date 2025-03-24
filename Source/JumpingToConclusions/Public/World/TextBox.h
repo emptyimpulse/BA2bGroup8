@@ -33,4 +33,10 @@ public:
 
 	void DecreaseReplicatedVar();
 	FTimerHandle TestTimer;
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPCExplode();
+
+	UPROPERTY(EditAnywhere)
+	UParticleSystem* ExplosionEffect;
 };
