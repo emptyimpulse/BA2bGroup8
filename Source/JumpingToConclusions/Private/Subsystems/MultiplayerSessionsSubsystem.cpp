@@ -20,13 +20,13 @@ void UMultiplayerSessionsSubsystem::PrintSring(const FString& Str)
 void UMultiplayerSessionsSubsystem::Deinitialize()
 {
 	Super::Deinitialize();
-	UE_LOG(LogTemp,Warning,TEXT("MSS Deinitilize"));
+	UE_LOG(LogTemp,Warning,TEXT("MSS Reinitialize"));
 }
 
 void UMultiplayerSessionsSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
-	PrintSring(("MSS Initilize"));
+	PrintSring(("MSS Initialize"));
 
 }
 

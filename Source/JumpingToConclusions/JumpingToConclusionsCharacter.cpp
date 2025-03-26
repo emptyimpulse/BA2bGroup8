@@ -139,7 +139,7 @@ void AJumpingToConclusionsCharacter::ServerRPCFunction_Implementation(int MyArg)
 {
 	if(HasAuthority())
 	{
-#if 1
+#if 0
 		GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::Red,
 			"Server: ServerRPCFunction_Implementation");
 		
@@ -166,7 +166,7 @@ void AJumpingToConclusionsCharacter::ServerRPCFunction_Implementation(int MyArg)
 			
 			UStaticMeshComponent* StaticMeshComponent =  StaticMeshActor->GetStaticMeshComponent();
 			//Spheremesh check obsolete 
-			if (StaticMeshComponent && SphereMesh)
+			if (StaticMeshComponent)
 			{
 				StaticMeshComponent->SetIsReplicated(true);
 				StaticMeshComponent->SetSimulatePhysics(true);
