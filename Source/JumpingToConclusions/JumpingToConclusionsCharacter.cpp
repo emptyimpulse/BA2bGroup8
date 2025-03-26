@@ -11,6 +11,8 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Engine/StaticMeshActor.h"
+#include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystem.h"
 #include "Net/UnrealNetwork.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -61,7 +63,6 @@ void AJumpingToConclusionsCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 }
-
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -150,8 +151,11 @@ void AJumpingToConclusionsCharacter::ServerRPCFunction_Implementation(int MyArg)
 		{
 			return;
 		}
-
-		AStaticMeshActor* StaticMeshActor = GetWorld()->SpawnActor<AStaticMeshActor>(AStaticMeshActor::StaticClass());
+		
+		FActorSpawnParameters SpawnParameters;
+		SpawnParameters.Owner = this;
+		
+		AStaticMeshActor* StaticMeshActor = GetWorld()->SpawnActor<AStaticMeshActor>(SpawnParameters);
 		if (StaticMeshActor)
 		{
 			StaticMeshActor->SetReplicates(true);
@@ -179,4 +183,19 @@ bool AJumpingToConclusionsCharacter::ServerRPCFunction_Validate(int MyArg)
 	}
 	
 	return false;
+}
+
+void AJumpingToConclusionsCharacter::ClientRPCFunction_Implementation()
+{
+	if(ParticleSystem)
+	{
+		FVector SpawnLocation = GetActorLocation();
+		UGameplayStatics::SpawnEmitterAtLocation(
+			GetWorld(),
+			ParticleSystem,
+			SpawnLocation,
+			FRotator::ZeroRotator,
+			true,
+			EPSCPoolMethod::AutoRelease);
+	}
 }
