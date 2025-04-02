@@ -12,6 +12,7 @@ UMultiplayerSessionsSubsystem::UMultiplayerSessionsSubsystem()
 
 	CreateServerAfterDestroy = false;
 	DestroyServerName = "";
+	ServerNameToFind = "";
 }
 
 void UMultiplayerSessionsSubsystem::PrintString(const FString& Str)
@@ -92,6 +93,7 @@ void UMultiplayerSessionsSubsystem::CreateServer(FString ServerName)
 		IsLan = true;
 	}
 	SessionSettings.bIsLANMatch = IsLan;
+	SessionSettings.Set(FName("SERVER_NAME"), ServerName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
 	
 	SessionInterface->CreateSession(0,MySessionName,SessionSettings);
 
@@ -150,6 +152,8 @@ void UMultiplayerSessionsSubsystem::FindServer(FString ServerName)
 	SessionSearch->bIsLanQuery = IsLan;
 	SessionSearch->MaxSearchResults = 9999;
 	SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
+	ServerNameToFind = ServerName;
+	
 	SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
 }
 
@@ -157,12 +161,25 @@ void UMultiplayerSessionsSubsystem::OnFindSessionComplete(bool bWasSuccessful)
 {
 
 	if(!bWasSuccessful) return;
+	if(ServerNameToFind.IsEmpty()) return;
 	
 	TArray<FOnlineSessionSearchResult> Results = SessionSearch->SearchResults;
 	if (Results.Num() > 0)
 	{
 		FString Msg = FString::Printf(TEXT("Found Sessions: %d"), Results.Num());
 		PrintString(Msg);
+
+		for(FOnlineSessionSearchResult Result : Results)
+		{
+			if (Result.IsValid())
+			{
+				FString ServerName = "No-Name";
+				Result.Session.SessionSettings.Get(FName("SERVER_NAME"),ServerName);
+
+				FString MSg = FString::Printf(TEXT("Server Name = %s"), *ServerName);
+				PrintString(MSg);
+			}
+		}
 	}
 	else
 	{
