@@ -81,5 +81,7 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	UParticleSystem* ParticleSystem;
+
+	FTimerHandle SpawnTimer;
 };
 

@@ -172,7 +172,11 @@ void AJumpingToConclusionsCharacter::ServerRPCFunction_Implementation(int MyArg)
 				StaticMeshComponent->SetSimulatePhysics(true);
 				StaticMeshComponent->SetStaticMesh(SphereMesh);
 			}
+
+			
 		}
+		GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::Red,"Actor is being destoyed");
+		StaticMeshActor->Destroy();
 	}
 }
 bool AJumpingToConclusionsCharacter::ServerRPCFunction_Validate(int MyArg)
