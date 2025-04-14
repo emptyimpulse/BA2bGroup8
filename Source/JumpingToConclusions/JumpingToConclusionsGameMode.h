@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "Data/MatchStateEnums.h"
 #include "JumpingToConclusionsGameMode.generated.h"
 
 UCLASS(minimalapi)
@@ -13,6 +14,7 @@ class AJumpingToConclusionsGameMode : public AGameModeBase
 
 public:
 	AJumpingToConclusionsGameMode();
+	
 };
 
 
