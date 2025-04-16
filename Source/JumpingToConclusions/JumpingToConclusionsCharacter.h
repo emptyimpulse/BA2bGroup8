@@ -72,7 +72,10 @@ public:
 
 	UFUNCTION(Server,Reliable, WithValidation, BlueprintCallable)
 	void ServerRPCFunction(int MyArg);
-
+	
+	UFUNCTION(Server, Reliable,BlueprintCallable)
+	void ServerCastMatchTest();
+	
 	UPROPERTY(EditAnywhere)
 	UStaticMesh* SphereMesh;
 

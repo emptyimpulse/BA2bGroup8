@@ -10,7 +10,9 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "JumpingToConclusionsGameMode.h"
 #include "Engine/StaticMeshActor.h"
+#include "GameFramework/GameState.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystem.h"
 #include "Net/UnrealNetwork.h"
@@ -62,7 +64,9 @@ void AJumpingToConclusionsCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
+
 }
+
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -179,6 +183,19 @@ void AJumpingToConclusionsCharacter::ServerRPCFunction_Implementation(int MyArg)
 		StaticMeshActor->Destroy();
 	}
 }
+
+void AJumpingToConclusionsCharacter::ServerCastMatchTest_Implementation()
+{
+	if(HasAuthority())
+	{
+		if(AJumpingToConclusionsGameMode* GM = Cast<AJumpingToConclusionsGameMode>(GetWorld()->GetAuthGameMode()))
+		{
+			GM->SwapMatchState();
+		}
+	}
+}
+
+
 bool AJumpingToConclusionsCharacter::ServerRPCFunction_Validate(int MyArg)
 {
 	if (MyArg >= 0 && MyArg <=100)

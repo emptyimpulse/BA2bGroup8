@@ -14,7 +14,8 @@ class AJumpingToConclusionsGameMode : public AGameModeBase
 
 public:
 	AJumpingToConclusionsGameMode();
-	
+
+	void SwapMatchState();
 };
 
 

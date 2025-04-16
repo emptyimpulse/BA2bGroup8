@@ -2,6 +2,7 @@
 
 #include "JumpingToConclusionsGameMode.h"
 #include "JumpingToConclusionsCharacter.h"
+#include "Subsystems/JTCGameState.h"
 #include "UObject/ConstructorHelpers.h"
 
 AJumpingToConclusionsGameMode::AJumpingToConclusionsGameMode()
@@ -11,5 +12,22 @@ AJumpingToConclusionsGameMode::AJumpingToConclusionsGameMode()
 	if (PlayerPawnBPClass.Class != NULL)
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
+	}
+}
+
+void AJumpingToConclusionsGameMode::SwapMatchState()
+{
+	if(AJTCGameState* GS = GetGameState<AJTCGameState>())
+	{
+		if(GS->OnMatchState == EMatchState::BeginMatch)
+		{
+			GS->OnMatchState = EMatchState::PreLobby;
+			GEngine->AddOnScreenDebugMessage(-1,10,FColor::Red,"Lobby");
+		}
+		else
+		{
+			GS->OnMatchState = EMatchState::BeginMatch;
+			GEngine->AddOnScreenDebugMessage(-1,10,FColor::Red,"BeginMatch");
+		}
 	}
 }
