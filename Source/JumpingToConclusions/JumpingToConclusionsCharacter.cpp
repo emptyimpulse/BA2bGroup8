@@ -208,15 +208,8 @@ bool AJumpingToConclusionsCharacter::ServerRPCFunction_Validate(int MyArg)
 
 void AJumpingToConclusionsCharacter::ClientRPCFunction_Implementation()
 {
-	if(ParticleSystem)
-	{
-		FVector SpawnLocation = GetActorLocation();
-		UGameplayStatics::SpawnEmitterAtLocation(
-			GetWorld(),
-			ParticleSystem,
-			SpawnLocation,
-			FRotator::ZeroRotator,
-			true,
-			EPSCPoolMethod::AutoRelease);
-	}
+	UNiagaraComponent* NiagaraEffect = UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+		GetWorld(),
+		ClientParticleEffect,
+		this->GetActorLocation());
 }

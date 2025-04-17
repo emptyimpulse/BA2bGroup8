@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
+#include "NiagaraFunctionLibrary.h"
 #include "JumpingToConclusionsCharacter.generated.h"
 
 class USpringArmComponent;
@@ -76,14 +77,14 @@ public:
 	UFUNCTION(Server, Reliable,BlueprintCallable)
 	void ServerCastMatchTest();
 	
-	UPROPERTY(EditAnywhere)
-	UStaticMesh* SphereMesh;
-
 	UFUNCTION(Client, reliable, BlueprintCallable)
 	void ClientRPCFunction();
-
+	
 	UPROPERTY(EditAnywhere)
-	UParticleSystem* ParticleSystem;
+	UStaticMesh* SphereMesh;
+	
+	UPROPERTY(EditAnywhere)
+	UNiagaraSystem* ClientParticleEffect;
 
 	FTimerHandle SpawnTimer;
 };

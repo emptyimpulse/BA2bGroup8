@@ -14,6 +14,7 @@ void AJTCGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AJTCGameState,OnMatchState)
+	DOREPLIFETIME(AJTCGameState,VariableRepTest)
 }
 
 void AJTCGameState::PrintString(const FString& Str)
@@ -35,5 +36,10 @@ void AJTCGameState::OnRep_OnMatchStateChange()
 	{
 		PrintString("Client GameState");
 	}
+}
+
+void AJTCGameState::OnRep_OnVariableRepTest()
+{
+	PrintString(FString::Printf(TEXT("Server GameState %d"), VariableRepTest));
 }
 

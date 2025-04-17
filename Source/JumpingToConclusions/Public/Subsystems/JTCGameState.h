@@ -25,7 +25,13 @@ public:
 	UPROPERTY(ReplicatedUsing  = OnRep_OnMatchStateChange)
 	EMatchState OnMatchState = EMatchState::BeginMatch;
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION()
 	void OnRep_OnMatchStateChange();
-	
+
+	UPROPERTY(ReplicatedUsing = OnRep_OnVariableRepTest ,BlueprintReadOnly)
+	int VariableRepTest;
+
+	UFUNCTION()
+	void OnRep_OnVariableRepTest();
+
 };

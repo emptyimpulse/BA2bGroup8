@@ -22,12 +22,12 @@ void AJumpingToConclusionsGameMode::SwapMatchState()
 		if(GS->OnMatchState == EMatchState::BeginMatch)
 		{
 			GS->OnMatchState = EMatchState::PreLobby;
-			GEngine->AddOnScreenDebugMessage(-1,10,FColor::Red,"Lobby");
 		}
 		else
 		{
 			GS->OnMatchState = EMatchState::BeginMatch;
-			GEngine->AddOnScreenDebugMessage(-1,10,FColor::Red,"BeginMatch");
 		}
 	}
 }
+
+
