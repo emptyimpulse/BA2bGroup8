@@ -5,6 +5,8 @@
 #include "OnlineSubsystem.h"
 #include "Online/OnlineSessionNames.h"
 #include "SWarningOrErrorBox.h"
+#include "Subsystems/JtcPlayerStates.h"
+
 UMultiplayerSessionsSubsystem::UMultiplayerSessionsSubsystem()
 {
 	//PrintString(("MSS Constructor"));
@@ -256,6 +258,7 @@ void UMultiplayerSessionsSubsystem::OnJoinSessionComplete(FName SessionName, EOn
 		PrintString("OnJoinSessionComplete: Failed");
 	}
 }
+
 
 
 void UMultiplayerSessionsSubsystem::Deinitialize()

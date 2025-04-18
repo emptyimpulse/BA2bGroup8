@@ -15,7 +15,28 @@ class AJumpingToConclusionsGameMode : public AGameModeBase
 public:
 	AJumpingToConclusionsGameMode();
 
+	virtual void PostLogin(APlayerController* NewPlayer) override;
 	void SwapMatchState();
+
+	void TestShuffle();
+	//--------------------------------------------------------------------------------------------------------------//
+	//--------------------------------------------------PROPERTIES--------------------------------------------------//
+	//--------------------------------------------------------------------------------------------------------------//
+
+	//Inital List Of Joint Players
+	UPROPERTY()
+	TArray<APlayerController*> PlayerControllerList;
+	UPROPERTY(BlueprintReadOnly)
+	TArray<APlayerController*> ObserverList;
+	UPROPERTY(BlueprintReadOnly)
+	TArray<APlayerController*> SolverList;
+	UPROPERTY(BlueprintReadOnly)
+	TArray<APlayerController*> TraitorList;
+	
+	UPROPERTY()
+	int8 SolvedPuzzles = 0;
+
+	bool bAreTeamsAssigned = false;
 };
 
 
