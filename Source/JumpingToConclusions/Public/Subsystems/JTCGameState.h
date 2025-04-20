@@ -22,16 +22,28 @@ public:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
-	UPROPERTY(ReplicatedUsing  = OnRep_OnMatchStateChange)
-	EMatchState OnMatchState = EMatchState::BeginMatch;
-
 	UFUNCTION()
 	void OnRep_OnMatchStateChange();
-
-	UPROPERTY(ReplicatedUsing = OnRep_OnVariableRepTest ,BlueprintReadOnly)
-	int VariableRepTest;
-
+	
 	UFUNCTION()
 	void OnRep_OnVariableRepTest();
 
+	UFUNCTION(BlueprintCallable,Category="Game Score")
+	void AddSolvedPuzzleScore(bool bWasSuccessfull);
+
+	void CheckIfAllPuzzlesSolved();
+
+
+	UPROPERTY(ReplicatedUsing  = OnRep_OnMatchStateChange)
+	EMatchState OnMatchState = EMatchState::BeginMatch;
+protected:
+	
+	UPROPERTY(ReplicatedUsing = OnRep_OnVariableRepTest ,BlueprintReadOnly)
+	int VariableRepTest;
+
+	UPROPERTY(Replicated,VisibleAnywhere,Category="Game Score")
+	int32 SolvedPuzzles = 0;
+	
+	UPROPERTY(Replicated,BlueprintReadOnly,VisibleAnywhere,Category="Game Score")
+	int32 FailedPuzzles = 0;
 };

@@ -14,7 +14,6 @@
 #include "Engine/StaticMeshActor.h"
 #include "GameFramework/GameState.h"
 #include "Kismet/GameplayStatics.h"
-#include "Particles/ParticleSystem.h"
 #include "Net/UnrealNetwork.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);

@@ -17,5 +17,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	FString PlayerName;
 
+	UFUNCTION(BlueprintCallable)
 	void SetPlayerName(FString NewPlayerName);
+	FORCEINLINE FString GetPlayerName() { return PlayerName;}
 };

@@ -35,11 +35,43 @@ void AJTCGameState::OnRep_OnVariableRepTest()
 	PrintString(FString::Printf(TEXT("Server GameState %d"), VariableRepTest));
 }
 
+void AJTCGameState::AddSolvedPuzzleScore(bool bWasSuccessfull)
+{
+	if(HasAuthority())
+	{
+		if(bWasSuccessfull)
+		{
+			SolvedPuzzles += 1;
+		}
+		else
+		{
+			FailedPuzzles += 1;
+		}
+		CheckIfAllPuzzlesSolved();
+	}
+}
+
+void AJTCGameState::CheckIfAllPuzzlesSolved()
+{
+	if (SolvedPuzzles == 4)
+	{
+		PrintString(FString::Printf(TEXT("Solvers Have Won With: %d"), SolvedPuzzles));
+	}
+	else if (FailedPuzzles == 2)
+	{
+		PrintString(FString::Printf(TEXT("Traitors Have Won With: %d"), FailedPuzzles));
+	}
+	
+}
+
+
 void AJTCGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AJTCGameState,OnMatchState)
 	DOREPLIFETIME(AJTCGameState,VariableRepTest)
+	DOREPLIFETIME(AJTCGameState,SolvedPuzzles)
+	DOREPLIFETIME(AJTCGameState,FailedPuzzles)
 }
 

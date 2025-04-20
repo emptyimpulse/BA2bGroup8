@@ -3,7 +3,6 @@
 
 #include "Subsystems/JtcPlayerStates.h"
 
-void AJtcPlayerStates::GetPlayerNames(FString PlayerNameInput)
-{
-	PlayerName = PlayerNameInput;
-}
+#include "GameFramework/GameStateBase.h"
+
+

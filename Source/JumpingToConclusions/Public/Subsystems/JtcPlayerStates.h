@@ -14,11 +14,8 @@ class JUMPINGTOCONCLUSIONS_API AJtcPlayerStates : public APlayerState
 {
 	GENERATED_BODY()
 
-
-public:
-	UFUNCTION(BlueprintCallable)
-	void GetPlayerNames(FString PlayerNameInput);
 private:
 	UPROPERTY(EditAnywhere)
 	FString PlayerName;
+	
 };

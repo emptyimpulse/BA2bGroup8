@@ -26,7 +26,6 @@ void AJumpingToConclusionsGameMode::PostLogin(APlayerController* NewPlayer)
 	Super::PostLogin(NewPlayer);
 	
 	PlayerControllerList.Add(NewPlayer);
-	
 }
 
 void AJumpingToConclusionsGameMode::SwapMatchState()

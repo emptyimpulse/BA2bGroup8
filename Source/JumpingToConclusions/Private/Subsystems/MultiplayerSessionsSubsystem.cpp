@@ -4,7 +4,6 @@
 #include "Subsystems/MultiplayerSessionsSubsystem.h"
 #include "OnlineSubsystem.h"
 #include "Online/OnlineSessionNames.h"
-#include "SWarningOrErrorBox.h"
 #include "Subsystems/JtcPlayerStates.h"
 
 UMultiplayerSessionsSubsystem::UMultiplayerSessionsSubsystem()
