@@ -1,10 +1,10 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "JumpingToConclusionsGameMode.h"
-#include "JumpingToConclusionsCharacter.h"
 #include "Subsystems/JTCGameState.h"
 #include "Subsystems/JtcPlayerStates.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Subsystems/JtCGameInstance.h"
 #include "UObject/ConstructorHelpers.h"
 
 AJumpingToConclusionsGameMode::AJumpingToConclusionsGameMode()
@@ -24,8 +24,11 @@ AJumpingToConclusionsGameMode::AJumpingToConclusionsGameMode()
 void AJumpingToConclusionsGameMode::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
-	
+
 	PlayerControllerList.Add(NewPlayer);
+
+	
+
 }
 
 void AJumpingToConclusionsGameMode::SwapMatchState()

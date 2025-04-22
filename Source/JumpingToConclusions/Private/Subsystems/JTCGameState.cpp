@@ -4,6 +4,8 @@
 #include "Subsystems/JTCGameState.h"
 
 #include "Net/UnrealNetwork.h"
+#include "Subsystems/JtCGameInstance.h"
+#include "Subsystems/JtcPlayerStates.h"
 
 AJTCGameState::AJTCGameState()
 {
@@ -50,6 +52,21 @@ void AJTCGameState::AddSolvedPuzzleScore(bool bWasSuccessfull)
 		CheckIfAllPuzzlesSolved();
 	}
 }
+
+FString AJTCGameState::PrintAllPlayerNames()
+{
+	for (APlayerState* PlayerState : PlayerArray)
+	{
+		if (AJtcPlayerStates* CustomPlayerState = Cast<AJtcPlayerStates>(PlayerState))
+		{
+			PrintString(FString::Printf(TEXT("Player: %s"), *CustomPlayerState->GetPlayerNameCustom()));
+			return *CustomPlayerState->GetPlayerNameCustom();
+		}
+		return "Null";
+	}
+	return "Null";
+}
+
 
 void AJTCGameState::CheckIfAllPuzzlesSolved()
 {

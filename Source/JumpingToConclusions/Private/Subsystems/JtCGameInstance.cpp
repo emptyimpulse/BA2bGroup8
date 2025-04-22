@@ -6,4 +6,5 @@
 void UJtCGameInstance::SetPlayerName(FString NewPlayerName)
 {
 	PlayerName = NewPlayerName;
+	GEngine->AddOnScreenDebugMessage(-1,25.0f,FColor::Red,FString::Printf(TEXT("Player Name: %s"),*PlayerName));
 }

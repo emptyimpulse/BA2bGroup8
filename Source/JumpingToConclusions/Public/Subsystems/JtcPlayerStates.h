@@ -14,8 +14,15 @@ class JUMPINGTOCONCLUSIONS_API AJtcPlayerStates : public APlayerState
 {
 	GENERATED_BODY()
 
-private:
+public:
+	virtual void PostInitializeComponents() override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual FString GetPlayerNameCustom() const override;
+
+	void SetCustomPlayerName(FString CustomPlayerName);
+
 	UPROPERTY(EditAnywhere)
 	FString PlayerName;
+private:
 	
 };

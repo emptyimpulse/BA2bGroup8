@@ -5,8 +5,10 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameStateBase.h"
 #include "Data/MatchStateEnums.h"
+#include "JumpingToConclusions/JumpingToConclusionsCharacter.h"
 #include "JTCGameState.generated.h"
 
+class AJtcPlayerStates;
 /**
  * 
  */
@@ -31,6 +33,9 @@ public:
 	UFUNCTION(BlueprintCallable,Category="Game Score")
 	void AddSolvedPuzzleScore(bool bWasSuccessfull);
 
+	UFUNCTION(BlueprintCallable,Category="Player Data")
+	FString PrintAllPlayerNames();
+	
 	void CheckIfAllPuzzlesSolved();
 
 
@@ -46,4 +51,5 @@ protected:
 	
 	UPROPERTY(Replicated,BlueprintReadOnly,VisibleAnywhere,Category="Game Score")
 	int32 FailedPuzzles = 0;
+	
 };
