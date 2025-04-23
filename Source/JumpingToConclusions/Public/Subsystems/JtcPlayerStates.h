@@ -19,10 +19,21 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual FString GetPlayerNameCustom() const override;
 
+	bool IsReady() const {return bIsReady;}
+
 	void SetCustomPlayerName(FString CustomPlayerName);
 
 	UPROPERTY(EditAnywhere)
 	FString PlayerName;
+
+	UPROPERTY(ReplicatedUsing=OnRep_Ready)
+	bool bIsReady = false;
+
+	UFUNCTION(Server, Reliable)
+	void ServerSetReady(bool bReady);
+
+	UFUNCTION()
+	void OnRep_Ready();
 private:
 	
 };

@@ -8,6 +8,7 @@
 #include "NiagaraFunctionLibrary.h"
 #include "JumpingToConclusionsCharacter.generated.h"
 
+class UTextBlock;
 class USpringArmComponent;
 class UCameraComponent;
 class UInputMappingContext;
@@ -85,6 +86,9 @@ public:
 	
 	UPROPERTY(EditAnywhere)
 	UNiagaraSystem* ClientParticleEffect;
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly)
+	UTextRenderComponent* PlayerName;
 
 	FTimerHandle SpawnTimer;
 };

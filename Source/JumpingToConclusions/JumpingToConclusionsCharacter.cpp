@@ -11,10 +11,13 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "JumpingToConclusionsGameMode.h"
+#include "Components/TextRenderComponent.h"
 #include "Engine/StaticMeshActor.h"
 #include "GameFramework/GameState.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
+#include "Subsystems/JTCGameState.h"
+#include "Subsystems/JtcPlayerStates.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -49,6 +52,10 @@ AJumpingToConclusionsCharacter::AJumpingToConclusionsCharacter()
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->TargetArmLength = 400.0f; // The camera follows at this distance behind the character	
 	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
+
+	PlayerName = CreateDefaultSubobject<UTextRenderComponent>(TEXT("Player"));
+	PlayerName->SetupAttachment(RootComponent);
+	PlayerName->SetText(FText::FromString("Null"));
 
 	// Create a follow camera
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));

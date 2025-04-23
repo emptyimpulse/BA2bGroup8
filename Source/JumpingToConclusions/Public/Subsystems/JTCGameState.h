@@ -38,6 +38,7 @@ public:
 	
 	void CheckIfAllPuzzlesSolved();
 
+	void CheckAllPlayersReady();
 
 	UPROPERTY(ReplicatedUsing  = OnRep_OnMatchStateChange)
 	EMatchState OnMatchState = EMatchState::BeginMatch;

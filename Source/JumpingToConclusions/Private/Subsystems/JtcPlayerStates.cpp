@@ -20,11 +20,6 @@ void AJtcPlayerStates::PostInitializeComponents()
 	}
 }
 
-void AJtcPlayerStates::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-}
-
 FString AJtcPlayerStates::GetPlayerNameCustom() const
 {
 	return PlayerName;
@@ -33,4 +28,21 @@ FString AJtcPlayerStates::GetPlayerNameCustom() const
 void AJtcPlayerStates::SetCustomPlayerName(FString CustomPlayerName)
 {
 	PlayerName = CustomPlayerName;
+}
+
+
+void AJtcPlayerStates::ServerSetReady_Implementation(bool bReady)
+{
+	bIsReady = bReady;
+}
+
+void AJtcPlayerStates::OnRep_Ready()
+{
+	
+}
+void AJtcPlayerStates::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AJtcPlayerStates, bIsReady);
 }
