@@ -18,6 +18,7 @@ AJumpingToConclusionsGameMode::AJumpingToConclusionsGameMode()
 
 	PlayerStateClass = AJtcPlayerStates::StaticClass();
 
+
 }
 
 
@@ -26,9 +27,14 @@ void AJumpingToConclusionsGameMode::PostLogin(APlayerController* NewPlayer)
 	Super::PostLogin(NewPlayer);
 
 	PlayerControllerList.Add(NewPlayer);
-
 	
-
+	UJtCGameInstance* GI = Cast<UJtCGameInstance>(GetGameInstance());
+	if (GI)
+	{
+		FString TempName = TEXT("Null"); 
+		GI->SetPlayerName(NewPlayer->GetUniqueID(), TempName);
+	}
+	
 }
 
 void AJumpingToConclusionsGameMode::SwapMatchState()

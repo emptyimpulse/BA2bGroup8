@@ -17,18 +17,21 @@ class JUMPINGTOCONCLUSIONS_API AJtcPlayerStates : public APlayerState
 public:
 	virtual void PostInitializeComponents() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	virtual FString GetPlayerNameCustom() const override;
 
 	bool IsReady() const {return bIsReady;}
+	
+	
+	FString GetCustomPlayerName() const {return PlayerName;}
 
-	void SetCustomPlayerName(FString CustomPlayerName);
-
-	UPROPERTY(EditAnywhere)
-	FString PlayerName;
-
+	UFUNCTION(Server, Reliable)
+	void SetCustomPlayerName(const FString& CustomPlayerName);
+	
 	UPROPERTY(ReplicatedUsing=OnRep_Ready)
 	bool bIsReady = false;
 
+	UPROPERTY(Replicated)
+	FString PlayerName;
+	
 	UFUNCTION(Server, Reliable)
 	void ServerSetReady(bool bReady);
 

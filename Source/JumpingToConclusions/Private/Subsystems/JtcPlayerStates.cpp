@@ -3,6 +3,7 @@
 
 #include "Subsystems/JtcPlayerStates.h"
 
+#include "JtcPlayerController.h"
 #include "Net/UnrealNetwork.h"
 #include "Subsystems/JtCGameInstance.h"
 
@@ -11,29 +12,22 @@ void AJtcPlayerStates::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	UGameInstance* GameInstance = GetGameInstance();
-	if (UJtCGameInstance* CustomGameInstance = Cast<UJtCGameInstance>(GameInstance))
+	AJtcPlayerController* CustomPlayerController = Cast<AJtcPlayerController>(GetPlayerController());
+	if (CustomPlayerController)
 	{
-		SetCustomPlayerName(CustomGameInstance->GetPlayerName());
-		GEngine->AddOnScreenDebugMessage(-1,25.0f,FColor::Green,
-			FString::Printf(TEXT("Coping Name From Game instance %s"),*CustomGameInstance->GetPlayerName()));
+		CustomPlayerController->Server_SetPlayerName(PlayerName);
 	}
-}
-
-FString AJtcPlayerStates::GetPlayerNameCustom() const
-{
-	return PlayerName;
-}
-
-void AJtcPlayerStates::SetCustomPlayerName(FString CustomPlayerName)
-{
-	PlayerName = CustomPlayerName;
 }
 
 
 void AJtcPlayerStates::ServerSetReady_Implementation(bool bReady)
 {
 	bIsReady = bReady;
+}
+
+void AJtcPlayerStates::SetCustomPlayerName_Implementation(const FString& CustomPlayerName)
+{
+	PlayerName = CustomPlayerName;
 }
 
 void AJtcPlayerStates::OnRep_Ready()
@@ -45,4 +39,5 @@ void AJtcPlayerStates::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AJtcPlayerStates, bIsReady);
+	DOREPLIFETIME(AJtcPlayerStates, PlayerName);
 }

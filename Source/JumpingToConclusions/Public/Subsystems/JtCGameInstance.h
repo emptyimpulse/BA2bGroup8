@@ -14,10 +14,10 @@ class JUMPINGTOCONCLUSIONS_API UJtCGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 public:
-	UPROPERTY(EditAnywhere)
-	FString PlayerName;
+	UPROPERTY(BlueprintReadOnly)
+	TMap<int32, FString> PlayerNames;
 
 	UFUNCTION(BlueprintCallable)
-	void SetPlayerName(FString NewPlayerName);
-	FORCEINLINE FString GetPlayerName() { return PlayerName;}
+	void SetPlayerName(const int32 PlayerUniqueID, const FString& PlayerName);
+	FORCEINLINE FString GetPlayerName(const int32 PlayerUniqueID);
 };

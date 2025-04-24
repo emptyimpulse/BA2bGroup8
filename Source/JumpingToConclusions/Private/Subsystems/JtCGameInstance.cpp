@@ -3,8 +3,17 @@
 
 #include "Subsystems/JtCGameInstance.h"
 
-void UJtCGameInstance::SetPlayerName(FString NewPlayerName)
+void UJtCGameInstance::SetPlayerName(const int32 PlayerUniqueID, const FString& PlayerName)
 {
-	PlayerName = NewPlayerName;
-	GEngine->AddOnScreenDebugMessage(-1,25.0f,FColor::Red,FString::Printf(TEXT("Player Name: %s"),*PlayerName));
+	if (PlayerNames[PlayerUniqueID] == "Null")
+	{
+		PlayerNames.Add(PlayerUniqueID, PlayerName);
+		GEngine->AddOnScreenDebugMessage(-1,25.0f,FColor::Red,FString::Printf(TEXT("Player Name: %s"),*PlayerName));
+	}
+}
+
+FString UJtCGameInstance::GetPlayerName(const int32 PlayerUniqueID)
+{
+	const FString* FindPlayerName = PlayerNames.Find(PlayerUniqueID);
+	return FindPlayerName ? *FindPlayerName : TEXT("Null");
 }

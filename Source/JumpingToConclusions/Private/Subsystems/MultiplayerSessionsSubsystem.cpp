@@ -123,7 +123,7 @@ void UMultiplayerSessionsSubsystem::OnCreateSessionComplete(FName SessionName, b
 	if (bWasSuccessful)
 	{
 		PrintString(FString::Printf(TEXT("OnCreateSessionComplete: %s"), *SessionName.ToString()));
-		GetWorld()->ServerTravel("/Game/JumpingToConclusions/Maps/GameLevel?Listen");
+		GetWorld()->ServerTravel("/Game/Lobby/LobbyLevel?Listen");
 	}
 }
 
