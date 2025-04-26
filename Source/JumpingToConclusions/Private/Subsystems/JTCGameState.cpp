@@ -93,7 +93,7 @@ void AJTCGameState::CheckAllPlayersReady()
 		AJtcPlayerStates* CustomPlayerState = Cast<AJtcPlayerStates>(PlayerState);
 		if (!CustomPlayerState || !CustomPlayerState->IsReady())
 		{
-			return;
+			
 		}
 	}
 

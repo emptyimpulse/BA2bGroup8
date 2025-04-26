@@ -28,13 +28,6 @@ void AJumpingToConclusionsGameMode::PostLogin(APlayerController* NewPlayer)
 
 	PlayerControllerList.Add(NewPlayer);
 	
-	UJtCGameInstance* GI = Cast<UJtCGameInstance>(GetGameInstance());
-	if (GI)
-	{
-		FString TempName = TEXT("Null"); 
-		GI->SetPlayerName(NewPlayer->GetUniqueID(), TempName);
-	}
-	
 }
 
 void AJumpingToConclusionsGameMode::SwapMatchState()

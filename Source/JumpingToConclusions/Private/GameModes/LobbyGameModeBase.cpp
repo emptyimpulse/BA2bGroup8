@@ -12,10 +12,3 @@ void ALobbyGameModeBase::PostLogin(APlayerController* NewPlayer)
 	AllPlayers.AddUnique(NewPlayer);
 }
 
-void ALobbyGameModeBase::StartGame()
-{
-	UE_LOG(LogTemp,Log,TEXT("Starting Game"))
-
-	//Open the Game level
-	//UGameplayStatics::OpenLevel(this,)
-}

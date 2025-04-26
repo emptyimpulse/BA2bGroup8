@@ -10,6 +10,6 @@ void AJtcPlayerController::Server_SetPlayerName_Implementation(const FString& Na
 	UJtCGameInstance* CustomGameInstance = Cast<UJtCGameInstance>(GetGameInstance());
 	if (CustomGameInstance)
 	{
-		CustomGameInstance->SetPlayerName(CustomGameInstance->GetUniqueID(), Name);
+		CustomGameInstance->SetPlayerName(GetUniqueID(), Name);
 	}
 }

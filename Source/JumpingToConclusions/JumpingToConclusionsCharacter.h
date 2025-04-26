@@ -78,7 +78,7 @@ public:
 	UFUNCTION(Server, Reliable,BlueprintCallable)
 	void ServerCastMatchTest();
 	
-	UFUNCTION(Client, reliable, BlueprintCallable)
+	UFUNCTION(Client, Reliable, BlueprintCallable)
 	void ClientRPCFunction();
 	
 	UPROPERTY(EditAnywhere)

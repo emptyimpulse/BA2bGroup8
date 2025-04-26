@@ -6,6 +6,7 @@
 #include "JtcPlayerController.h"
 #include "Net/UnrealNetwork.h"
 #include "Subsystems/JtCGameInstance.h"
+#include "Subsystems/JTCGameState.h"
 
 
 void AJtcPlayerStates::PostInitializeComponents()
@@ -32,7 +33,10 @@ void AJtcPlayerStates::SetCustomPlayerName_Implementation(const FString& CustomP
 
 void AJtcPlayerStates::OnRep_Ready()
 {
-	
+	if (AJTCGameState* CustomGameState = Cast<AJTCGameState>(GetWorld()->GetGameState()))
+	{
+		CustomGameState->CheckAllPlayersReady();
+	}
 }
 void AJtcPlayerStates::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
