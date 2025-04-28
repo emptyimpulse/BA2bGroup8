@@ -24,6 +24,11 @@ void AJtcPlayerStates::PostInitializeComponents()
 void AJtcPlayerStates::ServerSetReady_Implementation(bool bReady)
 {
 	bIsReady = bReady;
+	if (AJTCGameState* CustomGameState = Cast<AJTCGameState>(GetWorld()->GetGameState()))
+	{
+		GEngine->AddOnScreenDebugMessage(-1,4.0f,FColor::Yellow,"JtcPlayerStates::OnRep_Ready");
+		CustomGameState->CheckAllPlayersReady();
+	}
 }
 
 void AJtcPlayerStates::SetCustomPlayerName_Implementation(const FString& CustomPlayerName)
@@ -33,10 +38,7 @@ void AJtcPlayerStates::SetCustomPlayerName_Implementation(const FString& CustomP
 
 void AJtcPlayerStates::OnRep_Ready()
 {
-	if (AJTCGameState* CustomGameState = Cast<AJTCGameState>(GetWorld()->GetGameState()))
-	{
-		CustomGameState->CheckAllPlayersReady();
-	}
+
 }
 void AJtcPlayerStates::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {

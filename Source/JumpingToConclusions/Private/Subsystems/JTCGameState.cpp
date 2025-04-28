@@ -93,12 +93,13 @@ void AJTCGameState::CheckAllPlayersReady()
 		AJtcPlayerStates* CustomPlayerState = Cast<AJtcPlayerStates>(PlayerState);
 		if (!CustomPlayerState || !CustomPlayerState->IsReady())
 		{
-			
+			GEngine->AddOnScreenDebugMessage(-1,15.0f,FColor::Cyan,TEXT("Players Are not Ready Yet"));
+			return;
 		}
 	}
 
 	ALobbyGameModeBase* GameMode = GetWorld()->GetAuthGameMode<ALobbyGameModeBase>();
-	if (GameMode)
+	if (GameMode && PlayerArray.Num() == 4)
 	{
 		//Game mode has to start game here
 		GameMode->StartGame();

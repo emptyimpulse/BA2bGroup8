@@ -118,22 +118,15 @@ void UMultiplayerSessionsSubsystem::CreateServer(FString ServerName)
 
 void UMultiplayerSessionsSubsystem::OnCreateSessionComplete(FName SessionName, bool bWasSuccessful)
 {
-	PrintString(FString::Printf(TEXT("OnCreateSessionComplete: %d"), bWasSuccessful));
 
 	if (bWasSuccessful)
 	{
-		PrintString(FString::Printf(TEXT("OnCreateSessionComplete: %s"), *SessionName.ToString()));
 		GetWorld()->ServerTravel("/Game/Lobby/LobbyLevel?Listen");
 	}
 }
 
 void UMultiplayerSessionsSubsystem::OnDestroySessionComplete(FName SessionName, bool bWasSuccessful)
 {
-	FString Msg = FString::Printf(TEXT("OnDestroySessionComplete: SessionName %s,Success: %d"),
-		*SessionName.ToString(),
-		bWasSuccessful);
-	PrintString(Msg);
-
 	if (CreateServerAfterDestroy)
 	{
 		CreateServerAfterDestroy = false;

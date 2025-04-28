@@ -29,6 +29,12 @@ void AJumpingToConclusionsGameMode::PostLogin(APlayerController* NewPlayer)
 	PlayerControllerList.Add(NewPlayer);
 	
 }
+void AJumpingToConclusionsGameMode::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	
+}
 
 void AJumpingToConclusionsGameMode::SwapMatchState()
 {
@@ -94,6 +100,7 @@ void AJumpingToConclusionsGameMode::TestShuffle()
 		FString::Printf(TEXT("CurrentGameController %s"), *PlayerControllerList[i]->GetName()));
 	}
 }
+
 
 
 

@@ -12,3 +12,14 @@ void ALobbyGameModeBase::PostLogin(APlayerController* NewPlayer)
 	AllPlayers.AddUnique(NewPlayer);
 }
 
+void ALobbyGameModeBase::StartGame()
+{
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		GEngine->AddOnScreenDebugMessage(-1,15.0f,FColor::Cyan,TEXT("World Travel"));
+
+		World->ServerTravel("/Game/JumpingToConclusions/Maps/GameLevel?Listen");
+	}
+}
+
