@@ -7,6 +7,8 @@
 #include "Data/MatchStateEnums.h"
 #include "JumpingToConclusionsGameMode.generated.h"
 
+class ASetSpawnPoint;
+
 UCLASS(minimalapi)
 class AJumpingToConclusionsGameMode : public AGameModeBase
 {
@@ -17,10 +19,10 @@ public:
 
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 	void SwapMatchState();
-
 	void TestShuffle();
-	
-	virtual void PostInitializeComponents() override;
+
+	UFUNCTION(BlueprintCallable)
+	void TeleportPlayersToSpawnLocations();
 	//--------------------------------------------------------------------------------------------------------------//
 	//--------------------------------------------------PROPERTIES--------------------------------------------------//
 	//--------------------------------------------------------------------------------------------------------------//
@@ -37,8 +39,16 @@ public:
 	
 	UPROPERTY()
 	int8 SolvedPuzzles = 0;
-
 	bool bAreTeamsAssigned = false;
+
+	UPROPERTY(EditAnywhere)
+	ASetSpawnPoint* SpawnPoints;
+protected:
+	UFUNCTION()
+	void ShuffleAllPlayers();
+
+private:
+	int8 NumberOfPlayersLoggedIn = 0;
 };
 
 
