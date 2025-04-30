@@ -37,7 +37,30 @@ void AJTCGameState::OnRep_OnVariableRepTest()
 {
 	PrintString(FString::Printf(TEXT("Server GameState %d"), VariableRepTest));
 }
+//----------------------------------------------------------------------------------------------------//
+//---------------------------------------------Lobby--------------------------------------------------//
+//----------------------------------------------------------------------------------------------------//
+void AJTCGameState::CheckAllPlayersReady()
+{
+	if(!HasAuthority()) return;
 
+	for (APlayerState* PlayerState : PlayerArray)
+	{
+		AJtcPlayerStates* CustomPlayerState = Cast<AJtcPlayerStates>(PlayerState);
+		if (!CustomPlayerState || !CustomPlayerState->IsReady())
+		{
+			GEngine->AddOnScreenDebugMessage(-1,15.0f,FColor::Cyan,TEXT("Players Are not Ready Yet"));
+			return;
+		}
+	}
+
+	ALobbyGameModeBase* GameMode = GetWorld()->GetAuthGameMode<ALobbyGameModeBase>();
+	if (GameMode && PlayerArray.Num() == 4)
+	{
+		//Game mode has to start game here
+		GameMode->StartGame();
+	}
+}
 //Debug Only
 FString AJTCGameState::PrintAllPlayerNames()
 {
@@ -60,6 +83,7 @@ void AJTCGameState::AddSolvedPuzzleScore(bool bWasSuccessfull)
 		if(bWasSuccessfull)
 		{
 			SolvedPuzzles += 1;
+			PrintString(FString::Printf(TEXT("CurrentScore: %d"), SolvedPuzzles));
 		}
 		else
 		{
@@ -79,32 +103,10 @@ void AJTCGameState::CheckIfAllPuzzlesSolved()
 	{
 		PrintString(FString::Printf(TEXT("Traitors Have Won With: %d"), FailedPuzzles));
 	}
-	
 }
 
 // A Simple check to see if all players are ready on the lobby screen
 
-void AJTCGameState::CheckAllPlayersReady()
-{
-	if(!HasAuthority()) return;
-
-	for (APlayerState* PlayerState : PlayerArray)
-	{
-		AJtcPlayerStates* CustomPlayerState = Cast<AJtcPlayerStates>(PlayerState);
-		if (!CustomPlayerState || !CustomPlayerState->IsReady())
-		{
-			GEngine->AddOnScreenDebugMessage(-1,15.0f,FColor::Cyan,TEXT("Players Are not Ready Yet"));
-			return;
-		}
-	}
-
-	ALobbyGameModeBase* GameMode = GetWorld()->GetAuthGameMode<ALobbyGameModeBase>();
-	if (GameMode && PlayerArray.Num() == 4)
-	{
-		//Game mode has to start game here
-		GameMode->StartGame();
-	}
-}
 
 // Replication Team dont worry about this
 void AJTCGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
