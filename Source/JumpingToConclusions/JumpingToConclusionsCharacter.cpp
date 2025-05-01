@@ -16,6 +16,7 @@
 #include "GameFramework/GameState.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
+#include "PhysicsEngine/PhysicsHandleComponent.h"
 #include "Subsystems/JTCGameState.h"
 #include "Subsystems/JtcPlayerStates.h"
 
@@ -62,6 +63,11 @@ AJumpingToConclusionsCharacter::AJumpingToConclusionsCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+	GrabPosisitonComponent = CreateDefaultSubobject<USceneComponent>(TEXT("GrabPosition"));
+	GrabPosisitonComponent->SetupAttachment(RootComponent);
+
+	PhysicsHandleComponent = CreateDefaultSubobject<UPhysicsHandleComponent>(TEXT("PhysicsHandleComponent"));
+
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
@@ -101,6 +107,12 @@ void AJumpingToConclusionsCharacter::SetupPlayerInputComponent(UInputComponent* 
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AJumpingToConclusionsCharacter::Look);
+
+		EnhancedInputComponent->BindAction(PickupAction, ETriggerEvent::Started, this, &AJumpingToConclusionsCharacter::Pickup);
+
+		EnhancedInputComponent->BindAction(PickupAction, ETriggerEvent::Completed, this, &AJumpingToConclusionsCharacter::Drop);
+
+
 	}
 	else
 	{
@@ -143,6 +155,50 @@ void AJumpingToConclusionsCharacter::Look(const FInputActionValue& Value)
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
 }
+void AJumpingToConclusionsCharacter::Pickup()
+{
+	FHitResult Hit;
+
+	FVector StartTrace = GrabPosisitonComponent->GetComponentLocation();
+	FVector EndTrace = StartTrace + FollowCamera->GetForwardVector() * 1600.0f;
+
+	DrawDebugLine(GetWorld(), StartTrace, EndTrace, FColor::Red, true, 5.0f, true, .5f);
+	
+	if (GetWorld()->LineTraceSingleByChannel(Hit, StartTrace, EndTrace, ECollisionChannel::ECC_GameTraceChannel1))
+	{
+		GEngine->AddOnScreenDebugMessage(-1,2.0f, FColor::Red, "Player Pickup");
+		AActor* HitActor = Hit.GetActor();
+		if (HitActor)
+		{
+			GEngine->AddOnScreenDebugMessage(-1,2.0f, FColor::Red, "Actor hit");
+
+			PickupItem(HitActor);
+		}
+	}
+}
+
+void AJumpingToConclusionsCharacter::PickupItem_Implementation(AActor* HitActor)
+{
+	UPrimitiveComponent* HitActorRoot = Cast<UPrimitiveComponent>(HitActor->GetRootComponent());
+	if (HitActorRoot && HitActorRoot->IsSimulatingPhysics())
+	{
+		GEngine->AddOnScreenDebugMessage(-1,2.0f, FColor::Red, "Server Is Simulating Physics");
+
+		PhysicsHandleComponent->GrabComponentAtLocation(HitActorRoot,NAME_None,GrabPosisitonComponent->GetComponentLocation());
+	}
+}
+
+void AJumpingToConclusionsCharacter::Drop()
+{
+	
+}
+
+void AJumpingToConclusionsCharacter::DropItem_Implementation()
+{
+	
+}
+
+
 
 //Server RPC Implementation, can be called by the client.
 void AJumpingToConclusionsCharacter::ServerRPCFunction_Implementation(int MyArg)

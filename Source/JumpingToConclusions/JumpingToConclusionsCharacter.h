@@ -8,6 +8,7 @@
 #include "NiagaraFunctionLibrary.h"
 #include "JumpingToConclusionsCharacter.generated.h"
 
+class UPhysicsHandleComponent;
 class UTextBlock;
 class USpringArmComponent;
 class UCameraComponent;
@@ -46,6 +47,11 @@ class AJumpingToConclusionsCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* PickupAction;
+
+	
+
 public:
 	AJumpingToConclusionsCharacter();
 	
@@ -57,9 +63,7 @@ protected:
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
-			
-
-protected:
+	
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
@@ -90,6 +94,22 @@ public:
 	UPROPERTY(EditAnywhere,BlueprintReadOnly)
 	UTextRenderComponent* PlayerName;
 
+	UPROPERTY(editAnywhere)
+	USceneComponent* GrabPosisitonComponent;
+
+	UPROPERTY(editAnywhere)
+	UPhysicsHandleComponent* PhysicsHandleComponent;
+	
+	void Pickup();
+	
+	void Drop();
+	
+	UFUNCTION(Server,Reliable)
+	void PickupItem(AActor* HitActor);
+
+	UFUNCTION(Server,Reliable)
+	void DropItem();
+	
 	FTimerHandle SpawnTimer;
 };
 
