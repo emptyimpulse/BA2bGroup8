@@ -10,10 +10,15 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "JumpingToConclusionsGameMode.h"
+#include "Components/TextRenderComponent.h"
 #include "Engine/StaticMeshActor.h"
+#include "GameFramework/GameState.h"
 #include "Kismet/GameplayStatics.h"
-#include "Particles/ParticleSystem.h"
 #include "Net/UnrealNetwork.h"
+#include "PhysicsEngine/PhysicsHandleComponent.h"
+#include "Subsystems/JTCGameState.h"
+#include "Subsystems/JtcPlayerStates.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -49,10 +54,19 @@ AJumpingToConclusionsCharacter::AJumpingToConclusionsCharacter()
 	CameraBoom->TargetArmLength = 400.0f; // The camera follows at this distance behind the character	
 	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
 
+	PlayerName = CreateDefaultSubobject<UTextRenderComponent>(TEXT("Player"));
+	PlayerName->SetupAttachment(RootComponent);
+	PlayerName->SetText(FText::FromString("Null"));
+
 	// Create a follow camera
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+
+	GrabPosisitonComponent = CreateDefaultSubobject<USceneComponent>(TEXT("GrabPosition"));
+	GrabPosisitonComponent->SetupAttachment(RootComponent);
+
+	PhysicsHandleComponent = CreateDefaultSubobject<UPhysicsHandleComponent>(TEXT("PhysicsHandleComponent"));
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
@@ -62,7 +76,9 @@ void AJumpingToConclusionsCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
+
 }
+
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -91,6 +107,12 @@ void AJumpingToConclusionsCharacter::SetupPlayerInputComponent(UInputComponent* 
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AJumpingToConclusionsCharacter::Look);
+
+		EnhancedInputComponent->BindAction(PickupAction, ETriggerEvent::Started, this, &AJumpingToConclusionsCharacter::Pickup);
+
+		EnhancedInputComponent->BindAction(PickupAction, ETriggerEvent::Completed, this, &AJumpingToConclusionsCharacter::Drop);
+
+
 	}
 	else
 	{
@@ -133,6 +155,50 @@ void AJumpingToConclusionsCharacter::Look(const FInputActionValue& Value)
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
 }
+void AJumpingToConclusionsCharacter::Pickup()
+{
+	FHitResult Hit;
+
+	FVector StartTrace = GrabPosisitonComponent->GetComponentLocation();
+	FVector EndTrace = StartTrace + FollowCamera->GetForwardVector() * 1600.0f;
+
+	DrawDebugLine(GetWorld(), StartTrace, EndTrace, FColor::Red, true, 5.0f, true, .5f);
+	
+	if (GetWorld()->LineTraceSingleByChannel(Hit, StartTrace, EndTrace, ECollisionChannel::ECC_GameTraceChannel1))
+	{
+		GEngine->AddOnScreenDebugMessage(-1,2.0f, FColor::Red, "Player Pickup");
+		AActor* HitActor = Hit.GetActor();
+		if (HitActor)
+		{
+			GEngine->AddOnScreenDebugMessage(-1,2.0f, FColor::Red, "Actor hit");
+
+			PickupItem(HitActor);
+		}
+	}
+}
+
+void AJumpingToConclusionsCharacter::PickupItem_Implementation(AActor* HitActor)
+{
+	UPrimitiveComponent* HitActorRoot = Cast<UPrimitiveComponent>(HitActor->GetRootComponent());
+	if (HitActorRoot && HitActorRoot->IsSimulatingPhysics())
+	{
+		GEngine->AddOnScreenDebugMessage(-1,2.0f, FColor::Red, "Server Is Simulating Physics");
+
+		PhysicsHandleComponent->GrabComponentAtLocation(HitActorRoot,NAME_None,GrabPosisitonComponent->GetComponentLocation());
+	}
+}
+
+void AJumpingToConclusionsCharacter::Drop()
+{
+	
+}
+
+void AJumpingToConclusionsCharacter::DropItem_Implementation()
+{
+	
+}
+
+
 
 //Server RPC Implementation, can be called by the client.
 void AJumpingToConclusionsCharacter::ServerRPCFunction_Implementation(int MyArg)
@@ -179,6 +245,19 @@ void AJumpingToConclusionsCharacter::ServerRPCFunction_Implementation(int MyArg)
 		StaticMeshActor->Destroy();
 	}
 }
+
+void AJumpingToConclusionsCharacter::ServerCastMatchTest_Implementation()
+{
+	if(HasAuthority())
+	{
+		if(AJumpingToConclusionsGameMode* GM = Cast<AJumpingToConclusionsGameMode>(GetWorld()->GetAuthGameMode()))
+		{
+			GM->SwapMatchState();
+		}
+	}
+}
+
+
 bool AJumpingToConclusionsCharacter::ServerRPCFunction_Validate(int MyArg)
 {
 	if (MyArg >= 0 && MyArg <=100)
@@ -191,15 +270,8 @@ bool AJumpingToConclusionsCharacter::ServerRPCFunction_Validate(int MyArg)
 
 void AJumpingToConclusionsCharacter::ClientRPCFunction_Implementation()
 {
-	if(ParticleSystem)
-	{
-		FVector SpawnLocation = GetActorLocation();
-		UGameplayStatics::SpawnEmitterAtLocation(
-			GetWorld(),
-			ParticleSystem,
-			SpawnLocation,
-			FRotator::ZeroRotator,
-			true,
-			EPSCPoolMethod::AutoRelease);
-	}
+	UNiagaraComponent* NiagaraEffect = UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+		GetWorld(),
+		ClientParticleEffect,
+		this->GetActorLocation());
 }
