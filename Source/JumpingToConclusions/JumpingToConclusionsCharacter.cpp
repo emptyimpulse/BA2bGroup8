@@ -15,6 +15,7 @@
 #include "Engine/StaticMeshActor.h"
 #include "GameFramework/GameState.h"
 #include "Kismet/GameplayStatics.h"
+#include "Managers/PuzzleSpawnManager.h"
 #include "Net/UnrealNetwork.h"
 #include "PhysicsEngine/PhysicsHandleComponent.h"
 #include "Subsystems/JTCGameState.h"
@@ -175,6 +176,9 @@ void AJumpingToConclusionsCharacter::Pickup()
 			PickupItem(HitActor);
 		}
 	}
+	APuzzleSpawnManager* PuzzleSpawnManager = Cast<APuzzleSpawnManager>(
+	UGameplayStatics::GetActorOfClass(GetWorld(),APuzzleSpawnManager::StaticClass()));
+	PuzzleSpawnManager->SpawnRandomPuzzles();
 }
 
 void AJumpingToConclusionsCharacter::PickupItem_Implementation(AActor* HitActor)

@@ -4,6 +4,9 @@
 #include "Subsystems/JTCGameState.h"
 
 #include "GameModes/LobbyGameModeBase.h"
+#include "JumpingToConclusions/JumpingToConclusionsGameMode.h"
+#include "Kismet/GameplayStatics.h"
+#include "Managers/PuzzleSpawnManager.h"
 #include "Net/UnrealNetwork.h"
 #include "Subsystems/JtCGameInstance.h"
 #include "Subsystems/JtcPlayerStates.h"
@@ -23,14 +26,6 @@ void AJTCGameState::PrintString(const FString& Str)
 
 void AJTCGameState::OnRep_OnMatchStateChange()
 {
-	if(HasAuthority())
-	{
-		PrintString("Server GameState");
-	}
-	else
-	{
-		PrintString("Client GameState");
-	}
 }
 
 void AJTCGameState::OnRep_OnVariableRepTest()
@@ -76,6 +71,9 @@ FString AJTCGameState::PrintAllPlayerNames()
 	return "Null";
 }
 // Point apply System
+//----------------------------------------------------------------------------------------------------//
+//---------------------------------------------GAME---------------------------------------------------//
+//----------------------------------------------------------------------------------------------------//
 void AJTCGameState::AddSolvedPuzzleScore(bool bWasSuccessfull)
 {
 	if(HasAuthority())
@@ -95,9 +93,23 @@ void AJTCGameState::AddSolvedPuzzleScore(bool bWasSuccessfull)
 // Games Win condition if all puzzles are solved
 void AJTCGameState::CheckIfAllPuzzlesSolved()
 {
-	if (SolvedPuzzles == 4)
+	if (SolvedPuzzles == 3)
 	{
 		PrintString(FString::Printf(TEXT("Solvers Have Won With: %d"), SolvedPuzzles));
+		RoundNumber += 1;
+		AJumpingToConclusionsGameMode* CurrentGameMode = Cast<AJumpingToConclusionsGameMode>(GetWorld()->GetAuthGameMode());
+		if (CurrentGameMode && RoundNumber <= 3)
+		{
+			CurrentGameMode->TeleportPlayersToSpawnLocations();
+			APuzzleSpawnManager* PuzzleSpawnManager = Cast<APuzzleSpawnManager>(
+				UGameplayStatics::GetActorOfClass(GetWorld(),APuzzleSpawnManager::StaticClass()));
+
+			PuzzleSpawnManager->SpawnRandomPuzzles();
+		}
+		else
+		{
+			PrintString("Game End");
+		}
 	}
 	else if (FailedPuzzles == 2)
 	{

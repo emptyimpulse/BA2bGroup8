@@ -47,10 +47,13 @@ protected:
 	UPROPERTY(ReplicatedUsing = OnRep_OnVariableRepTest ,BlueprintReadOnly)
 	int VariableRepTest;
 
-	UPROPERTY(Replicated,VisibleAnywhere,Category="Game Score")
+	UPROPERTY(Replicated,BlueprintReadOnly,VisibleAnywhere,Category="Game Score")
 	int32 SolvedPuzzles = 0;
 	
 	UPROPERTY(Replicated,BlueprintReadOnly,VisibleAnywhere,Category="Game Score")
 	int32 FailedPuzzles = 0;
+
+	UPROPERTY(Replicated,BlueprintReadOnly,VisibleAnywhere,Category="Game Score")
+	int32 RoundNumber = 0;
 	
 };
