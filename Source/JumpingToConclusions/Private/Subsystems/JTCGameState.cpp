@@ -93,27 +93,31 @@ void AJTCGameState::AddSolvedPuzzleScore(bool bWasSuccessfull)
 // Games Win condition if all puzzles are solved
 void AJTCGameState::CheckIfAllPuzzlesSolved()
 {
-	if (SolvedPuzzles == 3)
+	if (HasAuthority())
 	{
-		PrintString(FString::Printf(TEXT("Solvers Have Won With: %d"), SolvedPuzzles));
-		RoundNumber += 1;
-		AJumpingToConclusionsGameMode* CurrentGameMode = Cast<AJumpingToConclusionsGameMode>(GetWorld()->GetAuthGameMode());
-		if (CurrentGameMode && RoundNumber <= 3)
+		
+		if (SolvedPuzzles == 3)
 		{
-			CurrentGameMode->TeleportPlayersToSpawnLocations();
-			APuzzleSpawnManager* PuzzleSpawnManager = Cast<APuzzleSpawnManager>(
-				UGameplayStatics::GetActorOfClass(GetWorld(),APuzzleSpawnManager::StaticClass()));
-
-			PuzzleSpawnManager->SpawnRandomPuzzles();
+			PrintString(FString::Printf(TEXT("Solvers Have Won With: %d"), SolvedPuzzles));
+			SolvedPuzzles = 0;
+			RoundNumber += 1;
+			AJumpingToConclusionsGameMode* CurrentGameMode = Cast<AJumpingToConclusionsGameMode>(GetWorld()->GetAuthGameMode());
+			if (CurrentGameMode && RoundNumber <= 3)
+			{
+				CurrentGameMode->TeleportPlayersToSpawnLocations();
+				APuzzleSpawnManager* PuzzleSpawnManager = Cast<APuzzleSpawnManager>(
+					UGameplayStatics::GetActorOfClass(GetWorld(),APuzzleSpawnManager::StaticClass()));
+				PuzzleSpawnManager->SpawnRandomPuzzles();
+			}
+			else
+			{
+				PrintString("Game End");
+			}
 		}
-		else
+		else if (FailedPuzzles == 2)
 		{
-			PrintString("Game End");
+			PrintString(FString::Printf(TEXT("Traitors Have Won With: %d"), FailedPuzzles));
 		}
-	}
-	else if (FailedPuzzles == 2)
-	{
-		PrintString(FString::Printf(TEXT("Traitors Have Won With: %d"), FailedPuzzles));
 	}
 }
 

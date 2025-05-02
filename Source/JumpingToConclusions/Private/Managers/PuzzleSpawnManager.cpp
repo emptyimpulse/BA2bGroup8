@@ -3,6 +3,8 @@
 
 #include "Managers/PuzzleSpawnManager.h"
 
+#include "InstancedStaticMeshDelegates.h"
+
 // Sets default values
 APuzzleSpawnManager::APuzzleSpawnManager()
 {
@@ -10,11 +12,11 @@ APuzzleSpawnManager::APuzzleSpawnManager()
 	PrimaryActorTick.bCanEverTick = true;
 
 	SpawnPointOne = CreateDefaultSubobject<USceneComponent>("SpawnPointOne");
-	SpawnPoinTwo = CreateDefaultSubobject<USceneComponent>("SpawnPointTwo");
+	SpawnPointTwo = CreateDefaultSubobject<USceneComponent>("SpawnPointTwo");
 	SpawnPointThree = CreateDefaultSubobject<USceneComponent>("SpawnPointThree");
 
 	SpawnLocations.Add(SpawnPointOne);
-	SpawnLocations.Add(SpawnPoinTwo);
+	SpawnLocations.Add(SpawnPointTwo);
 	SpawnLocations.Add(SpawnPointThree);
 }
 
@@ -24,6 +26,8 @@ void APuzzleSpawnManager::BeginPlay()
 	Super::BeginPlay();
 
 	DateInSeconds = FDateTime::Now().ToUnixTimestamp();
+	SRand = FRandomStream();
+	SRand.Initialize(DateInSeconds);
 }
 
 // Called every frame
@@ -37,22 +41,35 @@ void APuzzleSpawnManager::SpawnRandomPuzzles()
 {
 	if (HasAuthority())
 	{
-		FRandomStream SRand = FRandomStream();
-		SRand.Initialize(DateInSeconds);
+		if (SpawnedPuzzles.Num() != 0)
+		{
+			for (APuzzleTempCube* SpawnedActor : SpawnedPuzzles)
+			{
+				SpawnedActor->Destroy();
+			}
+			SpawnedPuzzles.RemoveAll([](AActor* Removed)
+			{
+				return Removed == nullptr||!IsValid(Removed);
+			});
+		}
+
 		for (int i = 0; i <= SpawnLocations.Num()-1; i++)
 		{
-			int8 RandomPuzzleSpawnIndex = SRand.RandRange(0,SpawnedActors.Num()-1);
+			//terrible code im sorry
+			int8 RandomPuzzleSpawnIndex = SRand.RandRange(0,2);
 			FActorSpawnParameters SpawnParams;
 			SpawnParams.Owner = this;
 			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 			
 			TSubclassOf<APuzzleTempCube> PuzzleClass = SpawnedActors[RandomPuzzleSpawnIndex];
 			
-			APuzzleTempCube* SpawnedPuzzle = GetWorld()->SpawnActor<APuzzleTempCube>(
+			APuzzleTempCube* TempPuzzle = GetWorld()->SpawnActor<APuzzleTempCube>(
 				PuzzleClass,
 				SpawnLocations[i]->GetComponentLocation(),
 				FRotator::ZeroRotator,
 				SpawnParams);
+
+			SpawnedPuzzles.Add(TempPuzzle);
 		}
 	}
 }

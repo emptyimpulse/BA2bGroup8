@@ -31,14 +31,20 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	TArray<TSubclassOf<APuzzleTempCube>> SpawnedActors;
+
+	UPROPERTY()
+	TArray<APuzzleTempCube*> SpawnedPuzzles;
 	
 	TArray<USceneComponent*> SpawnLocations;
-	UPROPERTY(EditAnywhere)
+	
+	UPROPERTY()
 	USceneComponent* SpawnPointOne;
-	UPROPERTY(EditAnywhere)
-	USceneComponent* SpawnPoinTwo;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
+	USceneComponent* SpawnPointTwo;
+	UPROPERTY()
 	USceneComponent* SpawnPointThree;
+
+	FRandomStream SRand;
 
 	//----------------------------------------------------------------------------------------------------//
 	//--------------------------------------------FUNCTIONS-----------------------------------------------//

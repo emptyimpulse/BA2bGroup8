@@ -3,6 +3,7 @@
 #include "JumpingToConclusionsGameMode.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "Managers/PuzzleSpawnManager.h"
 #include "ProductionTools/SetSpawnPoint.h"
 #include "Subsystems/JTCGameState.h"
 #include "Subsystems/JtcPlayerStates.h"
@@ -95,6 +96,9 @@ void AJumpingToConclusionsGameMode::ShuffleAllPlayers()
 					
 		bAreTeamsAssigned = true;
 	}
+	APuzzleSpawnManager* PuzzleSpawnManager = Cast<APuzzleSpawnManager>(
+	UGameplayStatics::GetActorOfClass(GetWorld(),APuzzleSpawnManager::StaticClass()));
+	PuzzleSpawnManager->SpawnRandomPuzzles();
 	TeleportPlayersToSpawnLocations();
 }
 void AJumpingToConclusionsGameMode::TestShuffle()
