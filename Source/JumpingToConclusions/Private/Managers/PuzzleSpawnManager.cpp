@@ -53,7 +53,7 @@ void APuzzleSpawnManager::SpawnRandomPuzzles()
 			});
 		}
 
-		for (int i = 0; i <= SpawnLocations.Num()-1; i++)
+		for (int32 i = 0; i <= SpawnLocations.Num()-1; i++)
 		{
 			//terrible code im sorry
 			int8 RandomPuzzleSpawnIndex = SRand.RandRange(0,2);
@@ -69,6 +69,7 @@ void APuzzleSpawnManager::SpawnRandomPuzzles()
 				FRotator::ZeroRotator,
 				SpawnParams);
 
+			TempPuzzle->SetPuzzleIndex(i);
 			SpawnedPuzzles.Add(TempPuzzle);
 		}
 	}

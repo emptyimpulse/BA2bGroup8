@@ -37,11 +37,11 @@ public:
 	
 	TArray<USceneComponent*> SpawnLocations;
 	
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	USceneComponent* SpawnPointOne;
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	USceneComponent* SpawnPointTwo;
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	USceneComponent* SpawnPointThree;
 
 	FRandomStream SRand;

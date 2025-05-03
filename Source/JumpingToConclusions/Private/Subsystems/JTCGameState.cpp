@@ -13,8 +13,18 @@
 
 AJTCGameState::AJTCGameState()
 {
+	AnswerSheet.Add(0);
+	AnswerSheet.Add(0);
+	AnswerSheet.Add(0);
 }
 
+void AJTCGameState::BeginPlay()
+{
+	Super::BeginPlay();
+	DateInSeconds = FDateTime::Now().ToUnixTimestamp();
+	SRand = FRandomStream();
+	SRand.Initialize(DateInSeconds);
+}
 void AJTCGameState::PrintString(const FString& Str)
 {
 	if(GEngine)
@@ -56,6 +66,8 @@ void AJTCGameState::CheckAllPlayersReady()
 		GameMode->StartGame();
 	}
 }
+
+
 //Debug Only
 FString AJTCGameState::PrintAllPlayerNames()
 {
@@ -70,6 +82,8 @@ FString AJTCGameState::PrintAllPlayerNames()
 	}
 	return "Null";
 }
+
+
 // Point apply System
 //----------------------------------------------------------------------------------------------------//
 //---------------------------------------------GAME---------------------------------------------------//
@@ -104,7 +118,7 @@ void AJTCGameState::CheckIfAllPuzzlesSolved()
 			AJumpingToConclusionsGameMode* CurrentGameMode = Cast<AJumpingToConclusionsGameMode>(GetWorld()->GetAuthGameMode());
 			if (CurrentGameMode && RoundNumber <= 3)
 			{
-				CurrentGameMode->TeleportPlayersToSpawnLocations();
+				//CurrentGameMode->TeleportPlayersToSpawnLocations();
 				APuzzleSpawnManager* PuzzleSpawnManager = Cast<APuzzleSpawnManager>(
 					UGameplayStatics::GetActorOfClass(GetWorld(),APuzzleSpawnManager::StaticClass()));
 				PuzzleSpawnManager->SpawnRandomPuzzles();
@@ -122,6 +136,19 @@ void AJTCGameState::CheckIfAllPuzzlesSolved()
 }
 
 // A Simple check to see if all players are ready on the lobby screen
+
+void AJTCGameState::CreatePuzzleAnswers()
+{
+	if (HasAuthority())
+	{
+		for (int8 i=0; i<= 2; i++)
+		{
+			int32 RandomGeneratedAnswer = SRand.RandRange(111111,999999);
+
+			AnswerSheet[i] = RandomGeneratedAnswer;
+		}
+	}
+}
 
 
 // Replication Team dont worry about this

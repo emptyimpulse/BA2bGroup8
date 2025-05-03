@@ -36,14 +36,21 @@ public:
 	UFUNCTION(BlueprintCallable,Category="Player Data")
 	FString PrintAllPlayerNames();
 	
+	
 	void CheckIfAllPuzzlesSolved();
 
 	void CheckAllPlayersReady();
 
 	UPROPERTY(ReplicatedUsing  = OnRep_OnMatchStateChange)
 	EMatchState OnMatchState = EMatchState::BeginMatch;
-protected:
 	
+	FRandomStream SRand;
+
+protected:
+
+	void CreatePuzzleAnswers();
+	virtual void BeginPlay() override;
+
 	UPROPERTY(ReplicatedUsing = OnRep_OnVariableRepTest ,BlueprintReadOnly)
 	int VariableRepTest;
 
@@ -55,5 +62,9 @@ protected:
 
 	UPROPERTY(Replicated,BlueprintReadOnly,VisibleAnywhere,Category="Game Score")
 	int32 RoundNumber = 0;
-	
+
+	int64 DateInSeconds;
+
+	UPROPERTY(Replicated)
+	TArray<int32> AnswerSheet;
 };
