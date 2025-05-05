@@ -18,7 +18,6 @@ public:
 	AJumpingToConclusionsGameMode();
 
 	virtual void PostLogin(APlayerController* NewPlayer) override;
-	void SwapMatchState();
 	void TestShuffle();
 
 	UFUNCTION(BlueprintCallable)

@@ -95,11 +95,13 @@ void AJTCGameState::AddSolvedPuzzleScore(bool bWasSuccessfull)
 		if(bWasSuccessfull)
 		{
 			SolvedPuzzles += 1;
-			PrintString(FString::Printf(TEXT("CurrentScore: %d"), SolvedPuzzles));
+			PrintString(FString::Printf(TEXT("SolverScore: %d"), SolvedPuzzles));
 		}
 		else
 		{
 			FailedPuzzles += 1;
+			PrintString(FString::Printf(TEXT("TraitorScore: %d"), SolvedPuzzles));
+
 		}
 		CheckIfAllPuzzlesSolved();
 	}
@@ -122,6 +124,7 @@ void AJTCGameState::CheckIfAllPuzzlesSolved()
 				APuzzleSpawnManager* PuzzleSpawnManager = Cast<APuzzleSpawnManager>(
 					UGameplayStatics::GetActorOfClass(GetWorld(),APuzzleSpawnManager::StaticClass()));
 				PuzzleSpawnManager->SpawnRandomPuzzles();
+				CreatePuzzleAnswers();
 			}
 			else
 			{
@@ -146,6 +149,7 @@ void AJTCGameState::CreatePuzzleAnswers()
 			int32 RandomGeneratedAnswer = SRand.RandRange(111111,999999);
 
 			AnswerSheet[i] = RandomGeneratedAnswer;
+			PrintString(FString::Printf(TEXT("Puzzle Answer at index %d %d"),i, AnswerSheet[i]));
 		}
 	}
 }

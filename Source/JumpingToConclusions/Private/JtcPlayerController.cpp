@@ -3,6 +3,7 @@
 
 #include "JtcPlayerController.h"
 
+#include "JumpingToConclusions/JumpingToConclusionsCharacter.h"
 #include "Subsystems/JtCGameInstance.h"
 
 void AJtcPlayerController::Server_SetPlayerName_Implementation(const FString& Name)
@@ -11,5 +12,15 @@ void AJtcPlayerController::Server_SetPlayerName_Implementation(const FString& Na
 	if (CustomGameInstance)
 	{
 		CustomGameInstance->SetPlayerName(GetUniqueID(), Name);
+	}
+}
+
+
+void AJtcPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+	if (AJumpingToConclusionsCharacter* PC = Cast<AJumpingToConclusionsCharacter>(GetPawn()))
+	{
+		PC->SetName();
 	}
 }

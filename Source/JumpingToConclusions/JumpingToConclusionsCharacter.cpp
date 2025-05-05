@@ -77,9 +77,12 @@ void AJumpingToConclusionsCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
-
 }
 
+void AJumpingToConclusionsCharacter::SetName()
+{
+	PlayerName->SetText(FText::FromString(GetController()->GetName()));
+}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -256,7 +259,6 @@ void AJumpingToConclusionsCharacter::ServerCastMatchTest_Implementation()
 	{
 		if(AJumpingToConclusionsGameMode* GM = Cast<AJumpingToConclusionsGameMode>(GetWorld()->GetAuthGameMode()))
 		{
-			GM->SwapMatchState();
 		}
 	}
 }

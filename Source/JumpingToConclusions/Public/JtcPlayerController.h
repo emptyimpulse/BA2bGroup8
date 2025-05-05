@@ -16,4 +16,13 @@ class JUMPINGTOCONCLUSIONS_API AJtcPlayerController : public APlayerController
 public:
 	UFUNCTION(Server, Reliable)
 	void Server_SetPlayerName(const FString& Name);
+
+	
+
+protected:
+	virtual void BeginPlay() override;
+
+public:
+	
+	
 };

@@ -30,41 +30,13 @@ void AJumpingToConclusionsGameMode::PostLogin(APlayerController* NewPlayer)
 	PlayerControllerList.Add(NewPlayer);
 
 	NumberOfPlayersLoggedIn++;
-
+	
 	if (NumberOfPlayersLoggedIn == 4)
 	{
 		ShuffleAllPlayers();
 	}
 }
 
-void AJumpingToConclusionsGameMode::SwapMatchState()
-{
-	if(AJTCGameState* GS = GetGameState<AJTCGameState>())
-	{
-		if(GS->OnMatchState == EMatchState::BeginMatch)
-		{
-			GS->OnMatchState = EMatchState::PreLobby;
-		}
-		else
-		{
-			GS->OnMatchState = EMatchState::BeginMatch;
-		}
-		
-		switch (GS->OnMatchState) {
-		case EMatchState::PreLobby:
-			GEngine->AddOnScreenDebugMessage(-1,5.0f,FColor::Red,"PreLobby");
-			break;
-			
-		case EMatchState::BeginMatch:
-			{
-
-			}
-			break;
-		case EMatchState::EndMatch:
-			break;
-		}
-	}
-}
 
 void AJumpingToConclusionsGameMode::ShuffleAllPlayers()
 {
@@ -80,6 +52,7 @@ void AJumpingToConclusionsGameMode::ShuffleAllPlayers()
 				
 	}
 	TestShuffle();
+	
 	if (bAreTeamsAssigned)
 	{
 		TraitorList[0] = PlayerControllerList[0];
@@ -100,6 +73,8 @@ void AJumpingToConclusionsGameMode::ShuffleAllPlayers()
 	UGameplayStatics::GetActorOfClass(GetWorld(),APuzzleSpawnManager::StaticClass()));
 	PuzzleSpawnManager->SpawnRandomPuzzles();
 	TeleportPlayersToSpawnLocations();
+	AJTCGameState* CustomGameState = GetGameState<AJTCGameState>();
+	CustomGameState->CreatePuzzleAnswers();
 }
 void AJumpingToConclusionsGameMode::TestShuffle()
 {

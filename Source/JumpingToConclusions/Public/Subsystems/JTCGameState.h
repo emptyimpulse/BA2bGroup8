@@ -46,9 +46,12 @@ public:
 	
 	FRandomStream SRand;
 
-protected:
+	UPROPERTY(Replicated)
+	TArray<int32> AnswerSheet;
 
 	void CreatePuzzleAnswers();
+protected:
+
 	virtual void BeginPlay() override;
 
 	UPROPERTY(ReplicatedUsing = OnRep_OnVariableRepTest ,BlueprintReadOnly)
@@ -64,7 +67,4 @@ protected:
 	int32 RoundNumber = 0;
 
 	int64 DateInSeconds;
-
-	UPROPERTY(Replicated)
-	TArray<int32> AnswerSheet;
 };

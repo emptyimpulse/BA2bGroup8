@@ -84,6 +84,9 @@ public:
 	
 	UFUNCTION(Client, Reliable, BlueprintCallable)
 	void ClientRPCFunction();
+
+	UFUNCTION()
+	void SetName();
 	
 	UPROPERTY(EditAnywhere)
 	UStaticMesh* SphereMesh;
