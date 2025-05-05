@@ -13,7 +13,7 @@
 APuzzleAnswerCubesTemp::APuzzleAnswerCubesTemp()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
 	SetRootComponent(StaticMesh);
@@ -45,17 +45,26 @@ void APuzzleAnswerCubesTemp::Tick(float DeltaTime)
 void APuzzleAnswerCubesTemp::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (AJumpingToConclusionsCharacter* PC = Cast<AJumpingToConclusionsCharacter>(OtherActor))
+}
+
+void APuzzleAnswerCubesTemp::Interact(AJumpingToConclusionsCharacter* InstigatingPlayer)
+{
+	Super::Interact(InstigatingPlayer);
+
+	if (AJumpingToConclusionsCharacter* PC = Cast<AJumpingToConclusionsCharacter>(InstigatingPlayer))
 	{
 		if (AJtcPlayerController* PlayerCont = Cast<AJtcPlayerController>(PC->GetController()))
 		{
 			if (IsValid(WidgetReference))
 			{
+				GEngine->AddOnScreenDebugMessage(-1,2.0f,FColor::Red,"Showing OnScreen");
+
 				ShowOnPlayerScreen(PlayerCont);
 			}
 		}
 	}
 }
+
 
 void APuzzleAnswerCubesTemp::ShowOnPlayerScreen_Implementation(APlayerController* Player)
 {

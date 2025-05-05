@@ -76,8 +76,8 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
-	UFUNCTION(Server,Reliable, WithValidation, BlueprintCallable)
-	void ServerRPCFunction(int MyArg);
+	UFUNCTION(Server,Reliable)
+	void ServerAnswerToPuzzle(int32 SubmittedAnswer,int32 AnswerIndex);
 	
 	UFUNCTION(Server, Reliable,BlueprintCallable)
 	void ServerCastMatchTest();
@@ -103,7 +103,7 @@ public:
 	UPROPERTY(editAnywhere)
 	UPhysicsHandleComponent* PhysicsHandleComponent;
 	
-	void Pickup();
+	void Pickup(); 
 	
 	void Drop();
 	
@@ -112,7 +112,8 @@ public:
 
 	UFUNCTION(Server,Reliable)
 	void DropItem();
+
+	void FoundInteractable(AActor* FoundInteractableActor);
 	
 	FTimerHandle SpawnTimer;
 };
-

@@ -100,7 +100,7 @@ void AJTCGameState::AddSolvedPuzzleScore(bool bWasSuccessfull)
 		else
 		{
 			FailedPuzzles += 1;
-			PrintString(FString::Printf(TEXT("TraitorScore: %d"), SolvedPuzzles));
+			PrintString(FString::Printf(TEXT("TraitorScore: %d"), FailedPuzzles));
 
 		}
 		CheckIfAllPuzzlesSolved();
@@ -164,5 +164,6 @@ void AJTCGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(AJTCGameState,VariableRepTest)
 	DOREPLIFETIME(AJTCGameState,SolvedPuzzles)
 	DOREPLIFETIME(AJTCGameState,FailedPuzzles)
+	DOREPLIFETIME(AJTCGameState,AnswerSheet)
 }
 

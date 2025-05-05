@@ -4,33 +4,28 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Components/EditableText.h"
+#include "Components/Button.h"
 #include "Components/TextBlock.h"
-#include "PuzzleAnswerSheet.generated.h"
+#include "PuzzleAnswerDisplay.generated.h"
 
-class UButton;
 /**
  * 
  */
 UCLASS()
-class JUMPINGTOCONCLUSIONS_API UPuzzleAnswerSheet : public UUserWidget
+class JUMPINGTOCONCLUSIONS_API UPuzzleAnswerDisplay : public UUserWidget
 {
 	GENERATED_BODY()
 public:
 	UPROPERTY()
 	int32 AnswerIndex;
-	
 protected:
-	UPROPERTY()
+	UPROPERTY(meta=(BindWidget))
 	UTextBlock* AnswerText;
-	
-	UPROPERTY(BlueprintReadOnly,Meta = (BindWidget))
-	UEditableText* AnswerTextBox;
 
-	UPROPERTY(Meta = (BindWidget))
-	UButton* AnswerButton;
+	UPROPERTY(meta=(BindWidget))
+	UButton* QuitButton;
 
 	UFUNCTION(BlueprintCallable)
-	void OnAnswerButtonClicked(int32 SubmittedAnswer);
+	void OnQuitButtonClicked();
 	virtual void NativeConstruct() override;
 };

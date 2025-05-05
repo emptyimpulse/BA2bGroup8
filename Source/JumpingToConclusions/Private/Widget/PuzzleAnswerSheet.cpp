@@ -5,26 +5,18 @@
 
 #include "Subsystems/JTCGameState.h"
 
-void UPuzzleAnswerSheet::OnAnswerButtonClicked_Implementation(int32 SubmittedAnswer)
+void UPuzzleAnswerSheet::OnAnswerButtonClicked(int32 SubmittedAnswer)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red,
 	FString::Printf(TEXT("AnswerInput %d"), SubmittedAnswer));
-	if (AJTCGameState* CustomGameState = Cast<AJTCGameState>(GetWorld()->GetGameState()))
+	if (AJumpingToConclusionsCharacter* CustomCharacter = Cast<AJumpingToConclusionsCharacter>(GetOwningPlayerPawn()))
 	{
-		if (CustomGameState->AnswerSheet[AnswerIndex] == SubmittedAnswer)
-		{
-			CustomGameState->AddSolvedPuzzleScore(true);
-			this->RemoveFromParent();
-		}
-		else
-		{
-			CustomGameState->AddSolvedPuzzleScore(false);
-			this->RemoveFromParent();
-		}
+		CustomCharacter->ServerAnswerToPuzzle(SubmittedAnswer,AnswerIndex);
+		this->RemoveFromParent();
 	}
 	else
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Failed Cast to gamestate");
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Failed Cast to Character");
 	}
 }
 

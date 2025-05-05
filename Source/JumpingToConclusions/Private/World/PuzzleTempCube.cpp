@@ -3,6 +3,7 @@
 
 #include "World/PuzzleTempCube.h"
 
+#include "JtcPlayerController.h"
 #include "Components/SphereComponent.h"
 #include "JumpingToConclusions/JumpingToConclusionsCharacter.h"
 #include "Net/UnrealNetwork.h"
@@ -96,10 +97,51 @@ void APuzzleTempCube::SetIsPuzzleSolved_Implementation()
 		OnRep_ReplicatedPuzzle();
 	}
 }
+
+void APuzzleTempCube::Interact(AJumpingToConclusionsCharacter* InstigatingPlayer)
+{
+	Super::Interact(InstigatingPlayer);
+
+	if (AJumpingToConclusionsCharacter* PC = Cast<AJumpingToConclusionsCharacter>(InstigatingPlayer))
+	{
+		if (AJtcPlayerController* PlayerCont = Cast<AJtcPlayerController>(PC->GetController()))
+		{
+			if (IsValid(WidgetReference))
+			{
+				GEngine->AddOnScreenDebugMessage(-1,2.0f,FColor::Red,"Showing OnScreen");
+
+				ShowOnPlayerScreen(PlayerCont);
+			}
+		}
+	}
+}
+
+void APuzzleTempCube::ShowOnPlayerScreen_Implementation(APlayerController* Player)
+{
+		
+	
+	GEngine->AddOnScreenDebugMessage(-1,5.0f,FColor::Red,"Widget Passed");
+	CreatedWidget = CreateWidget<UPuzzleAnswerDisplay>(Player, WidgetReference);
+	if (CreatedWidget)
+	{
+		CreatedWidget->AnswerIndex = PuzzleIndex;
+		CreatedWidget->AddToPlayerScreen();
+	}
+	else
+	{
+		UE_LOG(LogTemp,Error,TEXT("Widget not created"));
+	}
+	
+	const FInputModeUIOnly InputMode;
+	Player->SetInputMode(InputMode);
+	Player->SetShowMouseCursor(true);
+}
+
 void APuzzleTempCube::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(APuzzleTempCube,bIsPuzzleSolved);
 }
+
 

@@ -14,12 +14,14 @@
 #include "Components/TextRenderComponent.h"
 #include "Engine/StaticMeshActor.h"
 #include "GameFramework/GameState.h"
+#include "Interfaces/InteractionInterface.h"
 #include "Kismet/GameplayStatics.h"
 #include "Managers/PuzzleSpawnManager.h"
 #include "Net/UnrealNetwork.h"
 #include "PhysicsEngine/PhysicsHandleComponent.h"
 #include "Subsystems/JTCGameState.h"
 #include "Subsystems/JtcPlayerStates.h"
+#include "World/PuzzleAnswerCubesTemp.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -161,38 +163,30 @@ void AJumpingToConclusionsCharacter::Look(const FInputActionValue& Value)
 }
 void AJumpingToConclusionsCharacter::Pickup()
 {
-	FHitResult Hit;
 
-	FVector StartTrace = GrabPosisitonComponent->GetComponentLocation();
-	FVector EndTrace = StartTrace + FollowCamera->GetForwardVector() * 1600.0f;
+	//TODO make the pickup items work, its broken rn so im using it to debug other stuff
 
-	DrawDebugLine(GetWorld(), StartTrace, EndTrace, FColor::Red, true, 5.0f, true, .5f);
-	
-	if (GetWorld()->LineTraceSingleByChannel(Hit, StartTrace, EndTrace, ECollisionChannel::ECC_GameTraceChannel1))
+	TArray<AActor*> OverlappingActors;
+	GetOverlappingActors(OverlappingActors);
+
+	for (AActor* OverlappingActor : OverlappingActors)
 	{
-		GEngine->AddOnScreenDebugMessage(-1,2.0f, FColor::Red, "Player Pickup");
-		AActor* HitActor = Hit.GetActor();
-		if (HitActor)
+		if (OverlappingActor->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass()))
 		{
-			GEngine->AddOnScreenDebugMessage(-1,2.0f, FColor::Red, "Actor hit");
-
-			PickupItem(HitActor);
+			FoundInteractable(OverlappingActor);
 		}
 	}
-	APuzzleSpawnManager* PuzzleSpawnManager = Cast<APuzzleSpawnManager>(
-	UGameplayStatics::GetActorOfClass(GetWorld(),APuzzleSpawnManager::StaticClass()));
-	PuzzleSpawnManager->SpawnRandomPuzzles();
 }
 
 void AJumpingToConclusionsCharacter::PickupItem_Implementation(AActor* HitActor)
 {
-	UPrimitiveComponent* HitActorRoot = Cast<UPrimitiveComponent>(HitActor->GetRootComponent());
+	/*UPrimitiveComponent* HitActorRoot = Cast<UPrimitiveComponent>(HitActor->GetRootComponent());
 	if (HitActorRoot && HitActorRoot->IsSimulatingPhysics())
 	{
 		GEngine->AddOnScreenDebugMessage(-1,2.0f, FColor::Red, "Server Is Simulating Physics");
 
 		PhysicsHandleComponent->GrabComponentAtLocation(HitActorRoot,NAME_None,GrabPosisitonComponent->GetComponentLocation());
-	}
+	}*/
 }
 
 void AJumpingToConclusionsCharacter::Drop()
@@ -205,51 +199,37 @@ void AJumpingToConclusionsCharacter::DropItem_Implementation()
 	
 }
 
+void AJumpingToConclusionsCharacter::FoundInteractable(AActor* FoundInteractableActor)
+{
+	AInteractableActors* PuzzleInteractable = Cast<AInteractableActors>(FoundInteractableActor);
+	if (PuzzleInteractable)
+	{
+		GEngine->AddOnScreenDebugMessage(-1,2.0f,FColor::Red,"Found InteractableActor");
+		PuzzleInteractable->Interact(this);
+	}
+}
 
 
 //Server RPC Implementation, can be called by the client.
-void AJumpingToConclusionsCharacter::ServerRPCFunction_Implementation(int MyArg)
+void AJumpingToConclusionsCharacter::ServerAnswerToPuzzle_Implementation(int32 SubmittedAnswer,int32 AnswerIndex)
 {
-	if(HasAuthority())
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red,
+FString::Printf(TEXT("AnswerInput %d"), SubmittedAnswer));
+	if (AJTCGameState* CustomGameState = Cast<AJTCGameState>(GetWorld()->GetGameState()))
 	{
-#if 0
-		GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::Red,
-			"Server: ServerRPCFunction_Implementation");
-		
-		GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::Red,
-			FString::Printf(TEXT("MyArg: %d"), MyArg));
-#endif
-		
-		if (!SphereMesh)
+		if (CustomGameState->AnswerSheet[AnswerIndex] == SubmittedAnswer)
 		{
-			return;
+			UE_LOG(LogTemp, Warning, TEXT("Authority: %d"), CustomGameState->HasAuthority());
+			CustomGameState->AddSolvedPuzzleScore(true);
 		}
-		
-		FActorSpawnParameters SpawnParameters;
-		SpawnParameters.Owner = this;
-		
-		AStaticMeshActor* StaticMeshActor = GetWorld()->SpawnActor<AStaticMeshActor>(SpawnParameters);
-		if (StaticMeshActor)
+		else
 		{
-			StaticMeshActor->SetReplicates(true);
-			StaticMeshActor->SetReplicateMovement(true);
-			StaticMeshActor->SetMobility(EComponentMobility::Movable);
-			FVector SpawnLocation = GetActorLocation() + GetActorRotation().Vector() * 100.0f + GetActorUpVector() * 50.0f;
-			StaticMeshActor->SetActorLocation(SpawnLocation);
-			
-			UStaticMeshComponent* StaticMeshComponent =  StaticMeshActor->GetStaticMeshComponent();
-			//Spheremesh check obsolete 
-			if (StaticMeshComponent)
-			{
-				StaticMeshComponent->SetIsReplicated(true);
-				StaticMeshComponent->SetSimulatePhysics(true);
-				StaticMeshComponent->SetStaticMesh(SphereMesh);
-			}
-
-			
+			CustomGameState->AddSolvedPuzzleScore(false);
 		}
-		GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::Red,"Actor is being destoyed");
-		StaticMeshActor->Destroy();
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Failed Cast to gamestate");
 	}
 }
 
@@ -263,16 +243,6 @@ void AJumpingToConclusionsCharacter::ServerCastMatchTest_Implementation()
 	}
 }
 
-
-bool AJumpingToConclusionsCharacter::ServerRPCFunction_Validate(int MyArg)
-{
-	if (MyArg >= 0 && MyArg <=100)
-	{
-		return true;
-	}
-	
-	return false;
-}
 
 void AJumpingToConclusionsCharacter::ClientRPCFunction_Implementation()
 {

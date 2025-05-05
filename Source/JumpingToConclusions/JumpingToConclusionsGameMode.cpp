@@ -39,43 +39,43 @@ void AJumpingToConclusionsGameMode::PostLogin(APlayerController* NewPlayer)
 
 
 void AJumpingToConclusionsGameMode::ShuffleAllPlayers()
-{
-	int64 DateInSeconds = FDateTime::Now().ToUnixTimestamp();
-	FRandomStream SRand = FRandomStream();
-	SRand.Initialize(DateInSeconds);
-	for (int32 i = PlayerControllerList.Num() - 1; i > 0; i--)
-	{
-		int32 j = SRand.FRandRange(0,PlayerControllerList.Num()-1);
-		APlayerController* temp = PlayerControllerList[i];
-		PlayerControllerList[i] = PlayerControllerList[j];
-		PlayerControllerList[j] = temp;
-				
-	}
-	TestShuffle();
-	
-	if (bAreTeamsAssigned)
-	{
-		TraitorList[0] = PlayerControllerList[0];
-		ObserverList[0] = PlayerControllerList[1];
-		SolverList[0] = PlayerControllerList[2];
-		SolverList[1] = PlayerControllerList[3];
-	}
-	else
-	{
-		TraitorList.Add(PlayerControllerList[0]);
-		ObserverList.Add(PlayerControllerList[1]);
-		SolverList.Add(PlayerControllerList[2]);
-		SolverList.Add(PlayerControllerList[3]);
-					
-		bAreTeamsAssigned = true;
-	}
-	APuzzleSpawnManager* PuzzleSpawnManager = Cast<APuzzleSpawnManager>(
-	UGameplayStatics::GetActorOfClass(GetWorld(),APuzzleSpawnManager::StaticClass()));
-	PuzzleSpawnManager->SpawnRandomPuzzles();
-	TeleportPlayersToSpawnLocations();
-	AJTCGameState* CustomGameState = GetGameState<AJTCGameState>();
-	CustomGameState->CreatePuzzleAnswers();
-}
+ {
+ 	int64 DateInSeconds = FDateTime::Now().ToUnixTimestamp();
+ 	FRandomStream SRand = FRandomStream();
+ 	SRand.Initialize(DateInSeconds);
+ 	for (int32 i = PlayerControllerList.Num() - 1; i > 0; i--)
+ 	{
+ 		int32 j = SRand.FRandRange(0,PlayerControllerList.Num()-1);
+ 		APlayerController* temp = PlayerControllerList[i];
+ 		PlayerControllerList[i] = PlayerControllerList[j];
+ 		PlayerControllerList[j] = temp;
+ 				
+ 	}
+ 	TestShuffle();
+ 	
+ 	if (bAreTeamsAssigned)
+ 	{
+ 		TraitorList[0] = PlayerControllerList[0];
+ 		ObserverList[0] = PlayerControllerList[1];
+ 		SolverList[0] = PlayerControllerList[2];
+ 		SolverList[1] = PlayerControllerList[3];
+ 	}
+ 	else
+ 	{
+ 		TraitorList.Add(PlayerControllerList[0]);
+ 		ObserverList.Add(PlayerControllerList[1]);
+ 		SolverList.Add(PlayerControllerList[2]);
+ 		SolverList.Add(PlayerControllerList[3]);
+ 					
+ 		bAreTeamsAssigned = true;
+ 	}
+ 	APuzzleSpawnManager* PuzzleSpawnManager = Cast<APuzzleSpawnManager>(
+ 	UGameplayStatics::GetActorOfClass(GetWorld(),APuzzleSpawnManager::StaticClass()));
+ 	PuzzleSpawnManager->SpawnRandomPuzzles();
+ 	TeleportPlayersToSpawnLocations();
+ 	AJTCGameState* CustomGameState = GetGameState<AJTCGameState>();
+ 	CustomGameState->CreatePuzzleAnswers();
+ }
 void AJumpingToConclusionsGameMode::TestShuffle()
 {
 	for(int i = PlayerControllerList.Num() - 1; i >= 0; i--)

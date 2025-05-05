@@ -3,13 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InteractableActors.h"
 #include "GameFramework/Actor.h"
+#include "Widget/PuzzleAnswerDisplay.h"
 #include "PuzzleTempCube.generated.h"
 
 class USphereComponent;
 
 UCLASS()
-class JUMPINGTOCONCLUSIONS_API APuzzleTempCube : public AActor
+class JUMPINGTOCONCLUSIONS_API APuzzleTempCube : public AInteractableActors
 {
 	GENERATED_BODY()
 	
@@ -58,6 +60,15 @@ public:
 
 	UPROPERTY()
 	USphereComponent* SphereComponent;
+
+	
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UPuzzleAnswerDisplay> WidgetReference;
+
+	UPROPERTY()
+	UPuzzleAnswerDisplay* CreatedWidget;
+	
+
 	
 	//--------------------------------------------------------------------------------------------------------------//
 	//---------------------------------------------------FUNCTIONS--------------------------------------------------//
@@ -69,6 +80,9 @@ public:
 	void SetPuzzleIndex(int32 NewPuzzleIndex);
 	FORCEINLINE int32 GetPuzzleIndex() { return PuzzleIndex; }
 	FORCEINLINE bool IsPuzzleSolved() const { return bIsPuzzleSolved; }
-	
+
+	UFUNCTION(Client,Reliable)
+	void ShowOnPlayerScreen(APlayerController* Player);
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual void Interact(AJumpingToConclusionsCharacter* InstigatingPlayer) override;
 };

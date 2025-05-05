@@ -3,7 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InteractableActors.h"
 #include "GameFramework/Actor.h"
+#include "Interfaces/InteractionInterface.h"
 #include "PuzzleAnswerCubesTemp.generated.h"
 
 class AJtcPlayerController;
@@ -11,7 +13,7 @@ class UPuzzleAnswerSheet;
 class USphereComponent;
 
 UCLASS()
-class JUMPINGTOCONCLUSIONS_API APuzzleAnswerCubesTemp : public AActor
+class JUMPINGTOCONCLUSIONS_API APuzzleAnswerCubesTemp : public AInteractableActors
 {
 	GENERATED_BODY()
 	
@@ -52,4 +54,5 @@ public:
 
 	UFUNCTION(Client,Reliable)
 	void ShowOnPlayerScreen(APlayerController* Player);
+	virtual void Interact(AJumpingToConclusionsCharacter* InstigatingPlayer) override;
 };
