@@ -5,8 +5,11 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
+#include "NiagaraFunctionLibrary.h"
 #include "JumpingToConclusionsCharacter.generated.h"
 
+class UPhysicsHandleComponent;
+class UTextBlock;
 class USpringArmComponent;
 class UCameraComponent;
 class UInputMappingContext;
@@ -44,6 +47,11 @@ class AJumpingToConclusionsCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* PickupAction;
+
+	
+
 public:
 	AJumpingToConclusionsCharacter();
 	
@@ -55,9 +63,7 @@ protected:
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
-			
-
-protected:
+	
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
@@ -70,18 +76,47 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
-	UFUNCTION(Server,Reliable, WithValidation, BlueprintCallable)
-	void ServerRPCFunction(int MyArg);
-
-	UPROPERTY(EditAnywhere)
-	UStaticMesh* SphereMesh;
-
-	UFUNCTION(Client, reliable, BlueprintCallable)
+	UFUNCTION(Server,Reliable)
+	void ServerAnswerToPuzzle(int32 SubmittedAnswer,int32 AnswerIndex);
+	
+	UFUNCTION(Server, Reliable,BlueprintCallable)
+	void ServerCastMatchTest();
+	
+	UFUNCTION(Client, Reliable, BlueprintCallable)
 	void ClientRPCFunction();
 
-	UPROPERTY(EditAnywhere)
-	UParticleSystem* ParticleSystem;
+	UFUNCTION(Server, Reliable)
+	void ServerPickTraitor(APlayerController* ChosenPlayerController);
 
+	UFUNCTION()
+	void SetName();
+	
+	UPROPERTY(EditAnywhere)
+	UStaticMesh* SphereMesh;
+	
+	UPROPERTY(EditAnywhere)
+	UNiagaraSystem* ClientParticleEffect;
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly)
+	UTextRenderComponent* PlayerName;
+
+	UPROPERTY(editAnywhere)
+	USceneComponent* GrabPosisitonComponent;
+
+	UPROPERTY(editAnywhere)
+	UPhysicsHandleComponent* PhysicsHandleComponent;
+	
+	void Pickup(); 
+	
+	void Drop();
+	
+	UFUNCTION(Server,Reliable)
+	void PickupItem(AActor* HitActor);
+
+	UFUNCTION(Server,Reliable)
+	void DropItem();
+
+	void FoundInteractable(AActor* FoundInteractableActor);
+	
 	FTimerHandle SpawnTimer;
 };
-

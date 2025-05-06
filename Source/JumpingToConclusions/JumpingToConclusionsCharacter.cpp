@@ -10,10 +10,12 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
-#include "Engine/StaticMeshActor.h"
-#include "Kismet/GameplayStatics.h"
-#include "Particles/ParticleSystem.h"
-#include "Net/UnrealNetwork.h"
+#include "JumpingToConclusionsGameMode.h"
+#include "Components/TextRenderComponent.h"
+#include "Interfaces/InteractionInterface.h"
+#include "PhysicsEngine/PhysicsHandleComponent.h"
+#include "Subsystems/JTCGameState.h"
+#include "World/PuzzleAnswerCubesTemp.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -49,10 +51,19 @@ AJumpingToConclusionsCharacter::AJumpingToConclusionsCharacter()
 	CameraBoom->TargetArmLength = 400.0f; // The camera follows at this distance behind the character	
 	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
 
+	PlayerName = CreateDefaultSubobject<UTextRenderComponent>(TEXT("Player"));
+	PlayerName->SetupAttachment(RootComponent);
+	PlayerName->SetText(FText::FromString("Null"));
+
 	// Create a follow camera
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+
+	GrabPosisitonComponent = CreateDefaultSubobject<USceneComponent>(TEXT("GrabPosition"));
+	GrabPosisitonComponent->SetupAttachment(RootComponent);
+
+	PhysicsHandleComponent = CreateDefaultSubobject<UPhysicsHandleComponent>(TEXT("PhysicsHandleComponent"));
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
@@ -62,6 +73,12 @@ void AJumpingToConclusionsCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
+}
+
+
+void AJumpingToConclusionsCharacter::SetName()
+{
+	PlayerName->SetText(FText::FromString(GetController()->GetName()));
 }
 
 
@@ -91,6 +108,12 @@ void AJumpingToConclusionsCharacter::SetupPlayerInputComponent(UInputComponent* 
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AJumpingToConclusionsCharacter::Look);
+
+		EnhancedInputComponent->BindAction(PickupAction, ETriggerEvent::Started, this, &AJumpingToConclusionsCharacter::Pickup);
+
+		EnhancedInputComponent->BindAction(PickupAction, ETriggerEvent::Completed, this, &AJumpingToConclusionsCharacter::Drop);
+
+
 	}
 	else
 	{
@@ -133,73 +156,99 @@ void AJumpingToConclusionsCharacter::Look(const FInputActionValue& Value)
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
 }
+void AJumpingToConclusionsCharacter::ServerPickTraitor_Implementation(APlayerController* ChosenPlayerController)
+{
+	AGameModeBase* GM = GetWorld()->GetAuthGameMode();
+	if (GM)
+	{
+		if (AJumpingToConclusionsGameMode* CustomGameMode = Cast<AJumpingToConclusionsGameMode>(GM))
+		{
+			CustomGameMode->CheckIfTraitorCorrect(ChosenPlayerController);
+		}
+	}
+}
+void AJumpingToConclusionsCharacter::Pickup()
+{
+
+	//TODO make the pickup items work, its broken rn so im using it to debug other stuff
+
+	TArray<AActor*> OverlappingActors;
+	GetOverlappingActors(OverlappingActors);
+
+	for (AActor* OverlappingActor : OverlappingActors)
+	{
+		if (OverlappingActor->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass()))
+		{
+			FoundInteractable(OverlappingActor);
+		}
+	}
+}
+
+void AJumpingToConclusionsCharacter::PickupItem_Implementation(AActor* HitActor)
+{
+	/*UPrimitiveComponent* HitActorRoot = Cast<UPrimitiveComponent>(HitActor->GetRootComponent());
+	if (HitActorRoot && HitActorRoot->IsSimulatingPhysics())
+	{
+		GEngine->AddOnScreenDebugMessage(-1,2.0f, FColor::Red, "Server Is Simulating Physics");
+
+		PhysicsHandleComponent->GrabComponentAtLocation(HitActorRoot,NAME_None,GrabPosisitonComponent->GetComponentLocation());
+	}*/
+}
+
+void AJumpingToConclusionsCharacter::Drop()
+{
+	
+}
+
+void AJumpingToConclusionsCharacter::DropItem_Implementation()
+{
+	
+}
+
+void AJumpingToConclusionsCharacter::FoundInteractable(AActor* FoundInteractableActor)
+{
+	AInteractableActors* PuzzleInteractable = Cast<AInteractableActors>(FoundInteractableActor);
+	if (PuzzleInteractable)
+	{
+		GEngine->AddOnScreenDebugMessage(-1,2.0f,FColor::Red,"Found InteractableActor");
+		PuzzleInteractable->Interact(this);
+	}
+}
+
 
 //Server RPC Implementation, can be called by the client.
-void AJumpingToConclusionsCharacter::ServerRPCFunction_Implementation(int MyArg)
+void AJumpingToConclusionsCharacter::ServerAnswerToPuzzle_Implementation(int32 SubmittedAnswer,int32 AnswerIndex)
 {
-	if(HasAuthority())
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red,
+FString::Printf(TEXT("AnswerInput %d"), SubmittedAnswer));
+	if (AJTCGameState* CustomGameState = Cast<AJTCGameState>(GetWorld()->GetGameState()))
 	{
-#if 0
-		GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::Red,
-			"Server: ServerRPCFunction_Implementation");
-		
-		GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::Red,
-			FString::Printf(TEXT("MyArg: %d"), MyArg));
-#endif
-		
-		if (!SphereMesh)
+		if (CustomGameState->AnswerSheet[AnswerIndex] == SubmittedAnswer)
 		{
-			return;
+			UE_LOG(LogTemp, Warning, TEXT("Authority: %d"), CustomGameState->HasAuthority());
+			CustomGameState->AddSolvedPuzzleScore(true);
 		}
-		
-		FActorSpawnParameters SpawnParameters;
-		SpawnParameters.Owner = this;
-		
-		AStaticMeshActor* StaticMeshActor = GetWorld()->SpawnActor<AStaticMeshActor>(SpawnParameters);
-		if (StaticMeshActor)
+		else
 		{
-			StaticMeshActor->SetReplicates(true);
-			StaticMeshActor->SetReplicateMovement(true);
-			StaticMeshActor->SetMobility(EComponentMobility::Movable);
-			FVector SpawnLocation = GetActorLocation() + GetActorRotation().Vector() * 100.0f + GetActorUpVector() * 50.0f;
-			StaticMeshActor->SetActorLocation(SpawnLocation);
-			
-			UStaticMeshComponent* StaticMeshComponent =  StaticMeshActor->GetStaticMeshComponent();
-			//Spheremesh check obsolete 
-			if (StaticMeshComponent)
-			{
-				StaticMeshComponent->SetIsReplicated(true);
-				StaticMeshComponent->SetSimulatePhysics(true);
-				StaticMeshComponent->SetStaticMesh(SphereMesh);
-			}
+			CustomGameState->AddSolvedPuzzleScore(false);
+		}
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Failed Cast to gamestate");
+	}
+}
 
-			
-		}
-		GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::Red,"Actor is being destoyed");
-		StaticMeshActor->Destroy();
-	}
-}
-bool AJumpingToConclusionsCharacter::ServerRPCFunction_Validate(int MyArg)
+void AJumpingToConclusionsCharacter::ServerCastMatchTest_Implementation()
 {
-	if (MyArg >= 0 && MyArg <=100)
-	{
-		return true;
-	}
-	
-	return false;
+
 }
+
 
 void AJumpingToConclusionsCharacter::ClientRPCFunction_Implementation()
 {
-	if(ParticleSystem)
-	{
-		FVector SpawnLocation = GetActorLocation();
-		UGameplayStatics::SpawnEmitterAtLocation(
-			GetWorld(),
-			ParticleSystem,
-			SpawnLocation,
-			FRotator::ZeroRotator,
-			true,
-			EPSCPoolMethod::AutoRelease);
-	}
+	UNiagaraComponent* NiagaraEffect = UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+		GetWorld(),
+		ClientParticleEffect,
+		this->GetActorLocation());
 }

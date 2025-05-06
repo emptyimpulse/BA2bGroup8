@@ -90,8 +90,7 @@ void ATextBox::MulticastRPCExplode_Implementation()
 {
 	if (HasAuthority())
 	{
-		GEngine->AddOnScreenDebugMessage(-1,3.0f,FColor::Red,
-	"Server: MulticastRPCElxplode_Implementation");
+		///GEngine->AddOnScreenDebugMessage(-1,3.0f,FColor::Red, "Server: MulticastRPCElxplode_Implementation");
 		GetWorld()->GetTimerManager().SetTimer(
 		TestTimer,
 		this,
@@ -101,8 +100,7 @@ void ATextBox::MulticastRPCExplode_Implementation()
 	}
 	else
 	{
-		GEngine->AddOnScreenDebugMessage(-1,3.0f,FColor::Green,
-	"Client: ServerRPCFunction_Implementation");
+		//GEngine->AddOnScreenDebugMessage(-1,3.0f,FColor::Green,"Client: ServerRPCFunction_Implementation");
 	}
 
 	if (!IsRunningDedicatedServer())

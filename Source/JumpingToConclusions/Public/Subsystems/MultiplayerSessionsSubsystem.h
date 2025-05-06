@@ -36,6 +36,8 @@ public:
 	void OnDestroySessionComplete(FName SessionName, bool bWasSuccessful);
 	void OnFindSessionComplete(bool bWasSuccessful);
 	void OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
+
+	void SwapPlayerNames();
 	
 	bool CreateServerAfterDestroy;
 

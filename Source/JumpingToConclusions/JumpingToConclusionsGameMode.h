@@ -4,7 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "Data/MatchStateEnums.h"
 #include "JumpingToConclusionsGameMode.generated.h"
+
+class ASetSpawnPoint;
 
 UCLASS(minimalapi)
 class AJumpingToConclusionsGameMode : public AGameModeBase
@@ -13,6 +16,40 @@ class AJumpingToConclusionsGameMode : public AGameModeBase
 
 public:
 	AJumpingToConclusionsGameMode();
+
+	virtual void PostLogin(APlayerController* NewPlayer) override;
+	void TestShuffle();
+
+	UFUNCTION(BlueprintCallable)
+	void TeleportPlayersToSpawnLocations();
+
+	void CheckIfTraitorCorrect(APlayerController* ChosenPlayerController);
+	//--------------------------------------------------------------------------------------------------------------//
+	//--------------------------------------------------PROPERTIES--------------------------------------------------//
+	//--------------------------------------------------------------------------------------------------------------//
+
+	//Inital List Of Joint Players
+	UPROPERTY()
+	TArray<APlayerController*> PlayerControllerList;
+	UPROPERTY(BlueprintReadOnly)
+	TArray<APlayerController*> ObserverList;
+	UPROPERTY(BlueprintReadOnly)
+	TArray<APlayerController*> SolverList;
+	UPROPERTY(BlueprintReadOnly)
+	TArray<APlayerController*> TraitorList;
+	
+	UPROPERTY()
+	int8 SolvedPuzzles = 0;
+	bool bAreTeamsAssigned = false;
+
+	UPROPERTY(EditAnywhere)
+	ASetSpawnPoint* SpawnPoints;
+protected:
+	UFUNCTION()
+	void ShuffleAllPlayers();
+
+private:
+	int8 NumberOfPlayersLoggedIn = 0;
 };
 
 
