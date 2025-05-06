@@ -48,14 +48,14 @@ public:
 	
 	FRandomStream SRand;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(Replicated,BlueprintReadOnly)
 	TArray<int32> AnswerSheet;
 
 	void CreatePuzzleAnswers();
 
-	UPROPERTY(Replicated)
+	UPROPERTY(Replicated,BlueprintReadOnly)
 	TArray<APlayerController*> PuzzlersControllers;
-protected:
+protected: 
 
 	virtual void BeginPlay() override;
 
