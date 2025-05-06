@@ -42,9 +42,6 @@ protected:
 						 int32 OtherBodyIndex,
 						 bool bFromSweep,
 						 const FHitResult& SweepResult);
-
-	UPROPERTY()
-	int32 PuzzleIndex = 0;
 public:
 	//--------------------------------------------------------------------------------------------------------------//
 	//--------------------------------------------------PROPERTIES--------------------------------------------------//
@@ -69,6 +66,9 @@ public:
 	UPuzzleAnswerDisplay* CreatedWidget;
 	
 
+	UPROPERTY(Replicated)
+	int32 PuzzleIndex;
+
 	
 	//--------------------------------------------------------------------------------------------------------------//
 	//---------------------------------------------------FUNCTIONS--------------------------------------------------//
@@ -76,8 +76,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	UFUNCTION(Server,Reliable)
 	void SetIsPuzzleSolved();
-
-	void SetPuzzleIndex(int32 NewPuzzleIndex);
+	
 	FORCEINLINE int32 GetPuzzleIndex() { return PuzzleIndex; }
 	FORCEINLINE bool IsPuzzleSolved() const { return bIsPuzzleSolved; }
 

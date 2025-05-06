@@ -85,6 +85,9 @@ public:
 	UFUNCTION(Client, Reliable, BlueprintCallable)
 	void ClientRPCFunction();
 
+	UFUNCTION(Server, Reliable)
+	void ServerPickTraitor(APlayerController* ChosenPlayerController);
+
 	UFUNCTION()
 	void SetName();
 	

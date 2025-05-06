@@ -84,5 +84,6 @@ void APuzzleAnswerCubesTemp::ShowOnPlayerScreen_Implementation(APlayerController
 	
 	const FInputModeUIOnly InputMode;
 	Player->SetInputMode(InputMode);
+	Player->SetShowMouseCursor(true);
 }
 

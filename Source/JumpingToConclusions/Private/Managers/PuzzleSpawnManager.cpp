@@ -69,7 +69,7 @@ void APuzzleSpawnManager::SpawnRandomPuzzles()
 				FRotator::ZeroRotator,
 				SpawnParams);
 
-			TempPuzzle->SetPuzzleIndex(i);
+			TempPuzzle->PuzzleIndex = i;
 			SpawnedPuzzles.Add(TempPuzzle);
 		}
 	}

@@ -69,12 +69,17 @@ void AJumpingToConclusionsGameMode::ShuffleAllPlayers()
  					
  		bAreTeamsAssigned = true;
  	}
+	//spawning necessary game components
  	APuzzleSpawnManager* PuzzleSpawnManager = Cast<APuzzleSpawnManager>(
  	UGameplayStatics::GetActorOfClass(GetWorld(),APuzzleSpawnManager::StaticClass()));
  	PuzzleSpawnManager->SpawnRandomPuzzles();
- 	TeleportPlayersToSpawnLocations();
+
  	AJTCGameState* CustomGameState = GetGameState<AJTCGameState>();
  	CustomGameState->CreatePuzzleAnswers();
+	CustomGameState->GetPlayersForObserverCube();
+	
+	//Player Management
+ 	TeleportPlayersToSpawnLocations();
  }
 void AJumpingToConclusionsGameMode::TestShuffle()
 {
@@ -116,6 +121,19 @@ void AJumpingToConclusionsGameMode::TeleportPlayersToSpawnLocations()
 		}
 	}
 }
+
+void AJumpingToConclusionsGameMode::CheckIfTraitorCorrect(APlayerController* ChosenPlayerController)
+{
+	if (TraitorList[0] == ChosenPlayerController)
+	{
+		GEngine->AddOnScreenDebugMessage(-1,5.0f,FColor::Green,"Well Done You Have Found the Traitor");
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1,5.0f,FColor::Green,"No you have lost");
+	}
+}
+
 
 
 

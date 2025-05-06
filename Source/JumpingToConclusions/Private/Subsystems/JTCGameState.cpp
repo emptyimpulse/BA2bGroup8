@@ -67,6 +67,17 @@ void AJTCGameState::CheckAllPlayersReady()
 	}
 }
 
+void AJTCGameState::GetPlayersForObserverCube()
+{
+	if (HasAuthority())
+	{
+		const AJumpingToConclusionsGameMode* CurrentGameMode = GetDefaultGameMode<AJumpingToConclusionsGameMode>();
+		PuzzlersControllers.Add(CurrentGameMode->TraitorList[0]);
+		PuzzlersControllers.Add(CurrentGameMode->SolverList[0]);
+		PuzzlersControllers.Add(CurrentGameMode->SolverList[1]);
+	}
+}
+
 
 //Debug Only
 FString AJTCGameState::PrintAllPlayerNames()
@@ -165,5 +176,6 @@ void AJTCGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(AJTCGameState,SolvedPuzzles)
 	DOREPLIFETIME(AJTCGameState,FailedPuzzles)
 	DOREPLIFETIME(AJTCGameState,AnswerSheet)
+	DOREPLIFETIME(AJTCGameState,PuzzlersControllers)
 }
 

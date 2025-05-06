@@ -16,7 +16,7 @@ class JUMPINGTOCONCLUSIONS_API UPuzzleAnswerDisplay : public UUserWidget
 {
 	GENERATED_BODY()
 public:
-	UPROPERTY()
+	UPROPERTY(Replicated);
 	int32 AnswerIndex;
 protected:
 	UPROPERTY(meta=(BindWidget))
@@ -28,4 +28,7 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void OnQuitButtonClicked();
 	virtual void NativeConstruct() override;
+
+public:
+	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 };

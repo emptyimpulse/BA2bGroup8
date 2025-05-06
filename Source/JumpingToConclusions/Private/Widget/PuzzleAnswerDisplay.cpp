@@ -4,6 +4,7 @@
 #include "Widget/PuzzleAnswerDisplay.h"
 
 #include "JtcPlayerController.h"
+#include "Net/UnrealNetwork.h"
 #include "Subsystems/JTCGameState.h"
 
 
@@ -16,6 +17,8 @@ void UPuzzleAnswerDisplay::NativeConstruct()
 	AnswerText->SetText(FText::Format(FText::FromString("Answer For Index: {0} is {1}"),AnswerIndex,AnswerFromSheet));
 }
 
+
+
 void UPuzzleAnswerDisplay::OnQuitButtonClicked()
 {
 	AJtcPlayerController* CustomPlayerController = Cast<AJtcPlayerController>(GetOwningPlayer());
@@ -26,4 +29,9 @@ void UPuzzleAnswerDisplay::OnQuitButtonClicked()
 		CustomPlayerController->SetInputMode(InputMode);
 		this->RemoveFromParent();
 	}
+}
+void UPuzzleAnswerDisplay::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(UPuzzleAnswerDisplay, AnswerIndex);
 }

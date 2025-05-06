@@ -41,6 +41,8 @@ public:
 
 	void CheckAllPlayersReady();
 
+	void GetPlayersForObserverCube();
+
 	UPROPERTY(ReplicatedUsing  = OnRep_OnMatchStateChange)
 	EMatchState OnMatchState = EMatchState::BeginMatch;
 	
@@ -50,6 +52,9 @@ public:
 	TArray<int32> AnswerSheet;
 
 	void CreatePuzzleAnswers();
+
+	UPROPERTY(Replicated)
+	TArray<APlayerController*> PuzzlersControllers;
 protected:
 
 	virtual void BeginPlay() override;

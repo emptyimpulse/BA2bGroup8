@@ -12,15 +12,9 @@
 #include "InputActionValue.h"
 #include "JumpingToConclusionsGameMode.h"
 #include "Components/TextRenderComponent.h"
-#include "Engine/StaticMeshActor.h"
-#include "GameFramework/GameState.h"
 #include "Interfaces/InteractionInterface.h"
-#include "Kismet/GameplayStatics.h"
-#include "Managers/PuzzleSpawnManager.h"
-#include "Net/UnrealNetwork.h"
 #include "PhysicsEngine/PhysicsHandleComponent.h"
 #include "Subsystems/JTCGameState.h"
-#include "Subsystems/JtcPlayerStates.h"
 #include "World/PuzzleAnswerCubesTemp.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -80,6 +74,7 @@ void AJumpingToConclusionsCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 }
+
 
 void AJumpingToConclusionsCharacter::SetName()
 {
@@ -161,6 +156,17 @@ void AJumpingToConclusionsCharacter::Look(const FInputActionValue& Value)
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
 }
+void AJumpingToConclusionsCharacter::ServerPickTraitor_Implementation(APlayerController* ChosenPlayerController)
+{
+	AGameModeBase* GM = GetWorld()->GetAuthGameMode();
+	if (GM)
+	{
+		if (AJumpingToConclusionsGameMode* CustomGameMode = Cast<AJumpingToConclusionsGameMode>(GM))
+		{
+			CustomGameMode->CheckIfTraitorCorrect(ChosenPlayerController);
+		}
+	}
+}
 void AJumpingToConclusionsCharacter::Pickup()
 {
 
@@ -235,12 +241,7 @@ FString::Printf(TEXT("AnswerInput %d"), SubmittedAnswer));
 
 void AJumpingToConclusionsCharacter::ServerCastMatchTest_Implementation()
 {
-	if(HasAuthority())
-	{
-		if(AJumpingToConclusionsGameMode* GM = Cast<AJumpingToConclusionsGameMode>(GetWorld()->GetAuthGameMode()))
-		{
-		}
-	}
+
 }
 
 

@@ -41,12 +41,6 @@ void APuzzleTempCube::Tick(float DeltaTime)
 
 }
 
-void APuzzleTempCube::SetPuzzleIndex(int32 NewPuzzleIndex)
-{
-	PuzzleIndex = NewPuzzleIndex;
-}
-
-
 void APuzzleTempCube::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                       UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
@@ -142,6 +136,7 @@ void APuzzleTempCube::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(APuzzleTempCube,bIsPuzzleSolved);
+	DOREPLIFETIME(APuzzleTempCube,PuzzleIndex);
 }
 
 
