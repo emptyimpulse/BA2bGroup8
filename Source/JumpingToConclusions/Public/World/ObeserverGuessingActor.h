@@ -29,11 +29,13 @@ public:
 	UPROPERTY()
 	APlayerController* ChosenPlayerController;
 	
-	virtual void Interact(AJumpingToConclusionsCharacter* InstigatingPlayer) override;
 	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 
 protected:
 	virtual void BeginPlay() override;
+
+public:
+	virtual void Interact_Implementation(AJumpingToConclusionsCharacter* InstigatingPlayer) override;
 };

@@ -47,7 +47,7 @@ void APuzzleAnswerCubesTemp::OnSphereOverlap(UPrimitiveComponent* OverlappedComp
 {
 }
 
-void APuzzleAnswerCubesTemp::Interact(AJumpingToConclusionsCharacter* InstigatingPlayer)
+void APuzzleAnswerCubesTemp::Interact_Implementation(AJumpingToConclusionsCharacter* InstigatingPlayer)
 {
 	Super::Interact(InstigatingPlayer);
 

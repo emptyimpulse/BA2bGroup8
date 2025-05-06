@@ -83,5 +83,5 @@ public:
 	UFUNCTION(Client,Reliable)
 	void ShowOnPlayerScreen(APlayerController* Player);
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	virtual void Interact(AJumpingToConclusionsCharacter* InstigatingPlayer) override;
+	virtual void Interact_Implementation(AJumpingToConclusionsCharacter* InstigatingPlayer) override;
 };

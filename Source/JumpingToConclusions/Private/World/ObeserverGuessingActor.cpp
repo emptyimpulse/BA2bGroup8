@@ -20,7 +20,7 @@ void AObeserverGuessingActor::BeginPlay()
 	PlayerNameDisplay->SetText(FText::FromString(
 		"Player: "+ ChosenPlayerController->GetName()));
 }
-void AObeserverGuessingActor::Interact(AJumpingToConclusionsCharacter* InstigatingPlayer)
+void AObeserverGuessingActor::Interact_Implementation(AJumpingToConclusionsCharacter* InstigatingPlayer)
 {
 	Super::Interact(InstigatingPlayer);
 
