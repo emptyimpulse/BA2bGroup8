@@ -76,7 +76,7 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
-	UFUNCTION(Server,Reliable)
+	UFUNCTION(Server,Reliable,BlueprintCallable)
 	void ServerAnswerToPuzzle(int32 SubmittedAnswer,int32 AnswerIndex);
 	
 	UFUNCTION(Server, Reliable,BlueprintCallable)
@@ -110,7 +110,7 @@ public:
 	
 	void Drop();
 	
-	UFUNCTION(Server,Reliable)
+	UFUNCTION(Server,Reliable,BlueprintCallable)
 	void PickupItem(AActor* HitActor);
 
 	UFUNCTION(Server,Reliable)

@@ -29,7 +29,7 @@ public:
 	//--------------------------------------------------------------------------------------------------------------//
 
 	//Inital List Of Joint Players
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	TArray<APlayerController*> PlayerControllerList;
 	UPROPERTY(BlueprintReadOnly)
 	TArray<APlayerController*> ObserverList;
