@@ -92,7 +92,7 @@ void APuzzleTempCube::SetIsPuzzleSolved_Implementation()
 	}
 }
 
-void APuzzleTempCube::Interact(AJumpingToConclusionsCharacter* InstigatingPlayer)
+void APuzzleTempCube::Interact_Implementation(AJumpingToConclusionsCharacter* InstigatingPlayer)
 {
 	Super::Interact(InstigatingPlayer);
 
