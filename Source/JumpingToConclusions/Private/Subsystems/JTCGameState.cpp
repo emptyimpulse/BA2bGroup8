@@ -71,10 +71,13 @@ void AJTCGameState::GetPlayersForObserverCube()
 {
 	if (HasAuthority())
 	{
-		const AJumpingToConclusionsGameMode* CurrentGameMode = GetDefaultGameMode<AJumpingToConclusionsGameMode>();
-		PuzzlersControllers.Add(CurrentGameMode->TraitorList[0]);
-		PuzzlersControllers.Add(CurrentGameMode->SolverList[0]);
-		PuzzlersControllers.Add(CurrentGameMode->SolverList[1]);
+		//const AJumpingToConclusionsGameMode* CurrentGameMode = GetDefaultGameMode<AJumpingToConclusionsGameMode>();
+		//if (CurrentGameMode) 
+		//{
+			//PuzzlersControllers.Add(CurrentGameMode->TraitorList[0]);
+			//PuzzlersControllers.Add(CurrentGameMode->SolverList[0]);
+			//PuzzlersControllers.Add(CurrentGameMode->SolverList[1]);
+		//}
 	}
 }
 
