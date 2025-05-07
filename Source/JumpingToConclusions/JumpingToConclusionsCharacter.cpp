@@ -211,7 +211,7 @@ void AJumpingToConclusionsCharacter::FoundInteractable(AActor* FoundInteractable
 	if (PuzzleInteractable)
 	{
 		GEngine->AddOnScreenDebugMessage(-1,2.0f,FColor::Red,"Found InteractableActor");
-		PuzzleInteractable->Interact(this);
+		IInteractionInterface::Execute_Interact(FoundInteractableActor,this);
 	}
 }
 

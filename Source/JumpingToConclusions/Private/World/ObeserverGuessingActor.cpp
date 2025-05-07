@@ -22,8 +22,6 @@ void AObeserverGuessingActor::BeginPlay()
 }
 void AObeserverGuessingActor::Interact_Implementation(AJumpingToConclusionsCharacter* InstigatingPlayer)
 {
-	Super::Interact(InstigatingPlayer);
-
 	
 }
 

@@ -27,7 +27,6 @@ void AInteractableActors::Tick(float DeltaTime)
 
 void AInteractableActors::Interact_Implementation(AJumpingToConclusionsCharacter* InstigatingPlayer)
 {
-	IInteractionInterface::Interact(InstigatingPlayer);
 }
 
 

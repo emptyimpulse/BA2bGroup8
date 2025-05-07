@@ -94,8 +94,6 @@ void APuzzleTempCube::SetIsPuzzleSolved_Implementation()
 
 void APuzzleTempCube::Interact_Implementation(AJumpingToConclusionsCharacter* InstigatingPlayer)
 {
-	Super::Interact(InstigatingPlayer);
-
 	if (AJumpingToConclusionsCharacter* PC = Cast<AJumpingToConclusionsCharacter>(InstigatingPlayer))
 	{
 		if (AJtcPlayerController* PlayerCont = Cast<AJtcPlayerController>(PC->GetController()))
