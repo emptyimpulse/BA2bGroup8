@@ -156,7 +156,7 @@ void AJumpingToConclusionsCharacter::Look(const FInputActionValue& Value)
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
 }
-void AJumpingToConclusionsCharacter::ServerPickTraitor_Implementation(APlayerController* ChosenPlayerController)
+void AJumpingToConclusionsCharacter::ServerPickTraitor_Implementation(APlayerState* ChosenPlayerController)
 {
 	AGameModeBase* GM = GetWorld()->GetAuthGameMode();
 	if (GM)
@@ -207,12 +207,8 @@ void AJumpingToConclusionsCharacter::DropItem_Implementation()
 
 void AJumpingToConclusionsCharacter::FoundInteractable(AActor* FoundInteractableActor)
 {
-	AInteractableActors* PuzzleInteractable = Cast<AInteractableActors>(FoundInteractableActor);
-	if (PuzzleInteractable)
-	{
-		GEngine->AddOnScreenDebugMessage(-1,2.0f,FColor::Red,"Found InteractableActor");
-		IInteractionInterface::Execute_Interact(FoundInteractableActor,this);
-	}
+	GEngine->AddOnScreenDebugMessage(-1,2.0f,FColor::Red,"Found InteractableActor");
+	IInteractionInterface::Execute_Interact(FoundInteractableActor,this);
 }
 
 

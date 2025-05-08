@@ -86,7 +86,7 @@ public:
 	void ClientRPCFunction();
 
 	UFUNCTION(Server, Reliable)
-	void ServerPickTraitor(APlayerController* ChosenPlayerController);
+	void ServerPickTraitor(APlayerState* ChosenPlayerController);
 
 	UFUNCTION()
 	void SetName();

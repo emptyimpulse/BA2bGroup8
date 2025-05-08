@@ -3,6 +3,7 @@
 
 #include "Subsystems/JTCGameState.h"
 
+#include "GameFramework/GameSession.h"
 #include "GameModes/LobbyGameModeBase.h"
 #include "JumpingToConclusions/JumpingToConclusionsGameMode.h"
 #include "Kismet/GameplayStatics.h"
@@ -25,11 +26,12 @@ void AJTCGameState::BeginPlay()
 	SRand = FRandomStream();
 	SRand.Initialize(DateInSeconds);
 }
+
 void AJTCGameState::PrintString(const FString& Str)
 {
-	if(GEngine)
+	if (GEngine)
 	{
-		GEngine->AddOnScreenDebugMessage(-1,15.0f,FColor::Cyan,Str);
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Cyan, Str);
 	}
 }
 
@@ -42,19 +44,21 @@ void AJTCGameState::OnRep_OnVariableRepTest()
 {
 	PrintString(FString::Printf(TEXT("Server GameState %d"), VariableRepTest));
 }
+
 //----------------------------------------------------------------------------------------------------//
 //---------------------------------------------Lobby--------------------------------------------------//
 //----------------------------------------------------------------------------------------------------//
 void AJTCGameState::CheckAllPlayersReady()
 {
-	if(!HasAuthority()) return;
+	if (!HasAuthority()) return;
 
 	for (APlayerState* PlayerState : PlayerArray)
 	{
 		AJtcPlayerStates* CustomPlayerState = Cast<AJtcPlayerStates>(PlayerState);
 		if (!CustomPlayerState || !CustomPlayerState->IsReady())
 		{
-			GEngine->AddOnScreenDebugMessage(-1,15.0f,FColor::Cyan,TEXT("Players Are not Ready Yet"));
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Cyan,
+			                                 TEXT("Players Are not Ready Yet"));
 			return;
 		}
 	}
@@ -71,11 +75,15 @@ void AJTCGameState::GetPlayersForObserverCube()
 {
 	if (HasAuthority())
 	{
-		const AJumpingToConclusionsGameMode* CurrentGameMode = Cast<AJumpingToConclusionsGameMode>(GetWorld()->GetAuthGameMode());
-		if (CurrentGameMode){
-			PuzzlersControllers.Add(CurrentGameMode->TraitorList[0]);
-			PuzzlersControllers.Add(CurrentGameMode->SolverList[0]);
-			PuzzlersControllers.Add(CurrentGameMode->SolverList[1]);
+		const AJumpingToConclusionsGameMode* CurrentGameMode = Cast<AJumpingToConclusionsGameMode>(
+			GetWorld()->GetAuthGameMode());
+		if (CurrentGameMode)
+		{
+			PuzzlersControllers.Add(CurrentGameMode->TraitorList[0]->GetPlayerState<APlayerState>());
+			PuzzlersControllers.Add(CurrentGameMode->SolverList[0]->GetPlayerState<APlayerState>());
+			PuzzlersControllers.Add(CurrentGameMode->SolverList[1]->GetPlayerState<APlayerState>());
+			
+			OnObserverDelegate.Broadcast();
 		}
 	}
 }
@@ -103,9 +111,9 @@ FString AJTCGameState::PrintAllPlayerNames()
 //----------------------------------------------------------------------------------------------------//
 void AJTCGameState::AddSolvedPuzzleScore(bool bWasSuccessfull)
 {
-	if(HasAuthority())
+	if (HasAuthority())
 	{
-		if(bWasSuccessfull)
+		if (bWasSuccessfull)
 		{
 			SolvedPuzzles += 1;
 			PrintString(FString::Printf(TEXT("SolverScore: %d"), SolvedPuzzles));
@@ -114,28 +122,28 @@ void AJTCGameState::AddSolvedPuzzleScore(bool bWasSuccessfull)
 		{
 			FailedPuzzles += 1;
 			PrintString(FString::Printf(TEXT("TraitorScore: %d"), FailedPuzzles));
-
 		}
 		CheckIfAllPuzzlesSolved();
 	}
 }
+
 // Games Win condition if all puzzles are solved
 void AJTCGameState::CheckIfAllPuzzlesSolved()
 {
 	if (HasAuthority())
 	{
-		
 		if (SolvedPuzzles == 3)
 		{
 			PrintString(FString::Printf(TEXT("Solvers Have Won With: %d"), SolvedPuzzles));
 			SolvedPuzzles = 0;
 			RoundNumber += 1;
-			AJumpingToConclusionsGameMode* CurrentGameMode = Cast<AJumpingToConclusionsGameMode>(GetWorld()->GetAuthGameMode());
+			AJumpingToConclusionsGameMode* CurrentGameMode = Cast<AJumpingToConclusionsGameMode>(
+				GetWorld()->GetAuthGameMode());
 			if (CurrentGameMode && RoundNumber <= 3)
 			{
 				//CurrentGameMode->TeleportPlayersToSpawnLocations();
 				APuzzleSpawnManager* PuzzleSpawnManager = Cast<APuzzleSpawnManager>(
-					UGameplayStatics::GetActorOfClass(GetWorld(),APuzzleSpawnManager::StaticClass()));
+					UGameplayStatics::GetActorOfClass(GetWorld(), APuzzleSpawnManager::StaticClass()));
 				PuzzleSpawnManager->SpawnRandomPuzzles();
 				CreatePuzzleAnswers();
 			}
@@ -144,9 +152,10 @@ void AJTCGameState::CheckIfAllPuzzlesSolved()
 				PrintString("Game End");
 			}
 		}
-		else if (FailedPuzzles == 2)
+		else if (FailedPuzzles == 5)
 		{
 			PrintString(FString::Printf(TEXT("Traitors Have Won With: %d"), FailedPuzzles));
+			
 		}
 	}
 }
@@ -157,12 +166,12 @@ void AJTCGameState::CreatePuzzleAnswers()
 {
 	if (HasAuthority())
 	{
-		for (int8 i=0; i<= 2; i++)
+		for (int8 i = 0; i <= 2; i++)
 		{
-			int32 RandomGeneratedAnswer = SRand.RandRange(111111,999999);
+			int32 RandomGeneratedAnswer = SRand.RandRange(111111, 999999);
 
 			AnswerSheet[i] = RandomGeneratedAnswer;
-			PrintString(FString::Printf(TEXT("Puzzle Answer at index %d %d"),i, AnswerSheet[i]));
+			PrintString(FString::Printf(TEXT("Puzzle Answer at index %d %d"), i, AnswerSheet[i]));
 		}
 	}
 }
@@ -173,11 +182,10 @@ void AJTCGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(AJTCGameState,OnMatchState)
-	DOREPLIFETIME(AJTCGameState,VariableRepTest)
-	DOREPLIFETIME(AJTCGameState,SolvedPuzzles)
-	DOREPLIFETIME(AJTCGameState,FailedPuzzles)
-	DOREPLIFETIME(AJTCGameState,AnswerSheet)
-	DOREPLIFETIME(AJTCGameState,PuzzlersControllers)
+	DOREPLIFETIME(AJTCGameState, OnMatchState)
+	DOREPLIFETIME(AJTCGameState, VariableRepTest)
+	DOREPLIFETIME(AJTCGameState, SolvedPuzzles)
+	DOREPLIFETIME(AJTCGameState, FailedPuzzles)
+	DOREPLIFETIME(AJTCGameState, AnswerSheet)
+	DOREPLIFETIME(AJTCGameState, PuzzlersControllers)
 }
-

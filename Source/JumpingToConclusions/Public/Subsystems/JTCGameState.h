@@ -12,6 +12,8 @@ class AJtcPlayerStates;
 /**
  * 
  */
+
+DECLARE_MULTICAST_DELEGATE(FObserverCubeDelegate);
 UCLASS()
 class JUMPINGTOCONCLUSIONS_API AJTCGameState : public AGameStateBase
 {
@@ -54,7 +56,9 @@ public:
 	void CreatePuzzleAnswers();
 
 	UPROPERTY(Replicated,BlueprintReadOnly)
-	TArray<APlayerController*> PuzzlersControllers;
+	TArray<APlayerState*> PuzzlersControllers;
+
+	FObserverCubeDelegate OnObserverDelegate;
 protected: 
 
 	virtual void BeginPlay() override;
