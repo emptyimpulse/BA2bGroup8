@@ -70,25 +70,7 @@ void APuzzleTempCube::SetIsPuzzleSolved_Implementation()
 {
 	if (HasAuthority())
 	{
-		if (bIsPuzzleSolved == true)
-		{
-			bIsPuzzleSolved = false;
-			if (AJTCGameState* CustomGameState = GetWorld()->GetGameStateChecked<AJTCGameState>())
-			{
-				GEngine->AddOnScreenDebugMessage(-1,5.0f,FColor::Blue,
-					"PuzzleTempCube::GetGameState Good");
-
-				//TODO make the game state aware of the puzzle index
-				GEngine->AddOnScreenDebugMessage(-1,5.0f,FColor::Blue,
-					FString::Printf(TEXT("PuzzleIndex = %d"),PuzzleIndex));
-				CustomGameState->AddSolvedPuzzleScore(true);
-			}
-		}
-		else
-		{
-			bIsPuzzleSolved = true;
-		}
-		OnRep_ReplicatedPuzzle();
+		
 	}
 }
 

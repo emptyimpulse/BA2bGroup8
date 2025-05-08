@@ -223,6 +223,7 @@ FString::Printf(TEXT("AnswerInput %d"), SubmittedAnswer));
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Authority: %d"), CustomGameState->HasAuthority());
 			CustomGameState->AddSolvedPuzzleScore(true);
+			CustomGameState->AnswerSheet[AnswerIndex] = 119029102;
 		}
 		else
 		{
