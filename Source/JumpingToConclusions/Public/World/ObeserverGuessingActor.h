@@ -3,7 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/SphereComponent.h"
 #include "World/InteractableActors.h"
+#include "Subsystems/JTCGameState.h"
 #include "ObeserverGuessingActor.generated.h"
 
 /**
@@ -17,24 +19,25 @@ class JUMPINGTOCONCLUSIONS_API AObeserverGuessingActor : public AInteractableAct
 public:
 	AObeserverGuessingActor();
 
-	UPROPERTY(EditDefaultsOnly)
-	USceneComponent* SceneAsset;
+	UPROPERTY(EditAnywhere)
+	UStaticMeshComponent* SceneAsset;
 
 	UPROPERTY(EditDefaultsOnly)
-	UTextBlock* PlayerNameDisplay;
+	UTextRenderComponent* PlayerNameDisplay;
 
-	UPROPERTY(Replicated)
-	bool PlayerIndex;
-
-	UPROPERTY()
-	APlayerController* ChosenPlayerController;
+	UPROPERTY(EditAnywhere)
+	USphereComponent* InteractDistance;
 	
+	UPROPERTY(Replicated)
+	APlayerState* ChosenPlayerController;
 	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
-
+	
 protected:
 	virtual void BeginPlay() override;
+
+	UFUNCTION()
+	void SetPlayerChosenIndex();
 
 public:
 	virtual void Interact_Implementation(AJumpingToConclusionsCharacter* InstigatingPlayer) override;

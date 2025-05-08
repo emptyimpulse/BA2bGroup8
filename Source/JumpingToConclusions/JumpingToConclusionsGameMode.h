@@ -23,13 +23,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void TeleportPlayersToSpawnLocations();
 
-	void CheckIfTraitorCorrect(APlayerController* ChosenPlayerController);
+	void CheckIfTraitorCorrect(APlayerState* ChosenPlayerController);
 	//--------------------------------------------------------------------------------------------------------------//
 	//--------------------------------------------------PROPERTIES--------------------------------------------------//
 	//--------------------------------------------------------------------------------------------------------------//
 
 	//Inital List Of Joint Players
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(Replicated,BlueprintReadOnly)
 	TArray<APlayerController*> PlayerControllerList;
 	UPROPERTY(BlueprintReadOnly)
 	TArray<APlayerController*> ObserverList;
@@ -47,6 +47,9 @@ public:
 protected:
 	UFUNCTION()
 	void ShuffleAllPlayers();
+
+public:
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 private:
 	int8 NumberOfPlayersLoggedIn = 0;

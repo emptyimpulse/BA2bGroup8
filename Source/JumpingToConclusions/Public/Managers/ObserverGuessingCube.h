@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "ObserverGuessingCube.generated.h"
 
+class AObeserverGuessingActor;
+
 UCLASS()
 class JUMPINGTOCONCLUSIONS_API AObserverGuessingCube : public AActor
 {
@@ -18,9 +20,36 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	
+	int64 DateInSeconds;
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	//----------------------------------------------------------------------------------------------------//
+	//-------------------------------------------PROPERTIES-----------------------------------------------//
+	//----------------------------------------------------------------------------------------------------//
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AObeserverGuessingActor> ObeserverGuessingActorClass;
+	
+	UPROPERTY()
+	TArray<AObeserverGuessingActor*> SpawnedTraitorPickers;
+	
+	TArray<USceneComponent*> SpawnLocations;
+	
+	UPROPERTY(EditAnywhere)
+	USceneComponent* SpawnPointOne;
+	UPROPERTY(EditAnywhere)
+	USceneComponent* SpawnPointTwo;
+	UPROPERTY(EditAnywhere)
+	USceneComponent* SpawnPointThree;
+	
+	FRandomStream SRand;
+	//----------------------------------------------------------------------------------------------------//
+	//--------------------------------------------FUNCTIONS-----------------------------------------------//
+	//----------------------------------------------------------------------------------------------------//
+
+	void SpawnObserverTraitorPickers();
 
 };

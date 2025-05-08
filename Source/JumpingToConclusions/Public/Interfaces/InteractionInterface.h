@@ -26,5 +26,5 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "MyInterface")
 	void Interact(AJumpingToConclusionsCharacter* InstigatingPlayer);
 
-	virtual void Interact_Implementation(AJumpingToConclusionsCharacter* InstigatingPlayer) {}
+	virtual void Interact_Implementation(AJumpingToConclusionsCharacter* InstigatingPlayer);
 };

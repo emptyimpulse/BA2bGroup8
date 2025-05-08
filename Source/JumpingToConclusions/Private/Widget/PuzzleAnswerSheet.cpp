@@ -14,8 +14,6 @@ void UPuzzleAnswerSheet::NativeConstruct()
 }
 void UPuzzleAnswerSheet::OnAnswerButtonClicked(int32 SubmittedAnswer)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red,
-	FString::Printf(TEXT("AnswerInput %d"), SubmittedAnswer));
 	if (AJumpingToConclusionsCharacter* CustomCharacter = Cast<AJumpingToConclusionsCharacter>(GetOwningPlayerPawn()))
 	{
 		CustomCharacter->ServerAnswerToPuzzle(SubmittedAnswer,AnswerIndex);

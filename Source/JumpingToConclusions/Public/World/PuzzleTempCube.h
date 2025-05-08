@@ -55,7 +55,7 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	UMaterial* RedShiftMaterial;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	USphereComponent* SphereComponent;
 
 	

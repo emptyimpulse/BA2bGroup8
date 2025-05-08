@@ -49,8 +49,6 @@ void APuzzleAnswerCubesTemp::OnSphereOverlap(UPrimitiveComponent* OverlappedComp
 
 void APuzzleAnswerCubesTemp::Interact_Implementation(AJumpingToConclusionsCharacter* InstigatingPlayer)
 {
-	Super::Interact(InstigatingPlayer);
-
 	if (AJumpingToConclusionsCharacter* PC = Cast<AJumpingToConclusionsCharacter>(InstigatingPlayer))
 	{
 		if (AJtcPlayerController* PlayerCont = Cast<AJtcPlayerController>(PC->GetController()))
