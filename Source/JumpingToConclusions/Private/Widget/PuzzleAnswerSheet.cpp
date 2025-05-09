@@ -4,6 +4,7 @@
 #include "Widget/PuzzleAnswerSheet.h"
 
 #include "JtcPlayerController.h"
+#include "JumpingToConclusions/JumpingToConclusionsCharacter.h"
 #include "Subsystems/JTCGameState.h"
 
 void UPuzzleAnswerSheet::NativeConstruct()
@@ -23,6 +24,18 @@ void UPuzzleAnswerSheet::OnAnswerButtonClicked(int32 SubmittedAnswer)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Failed Cast to Character");
 	}
+	AJtcPlayerController* CustomPlayerController = Cast<AJtcPlayerController>(GetOwningPlayer());
+	if (CustomPlayerController)
+	{
+		CustomPlayerController->SetShowMouseCursor(false);
+		FInputModeGameOnly InputMode;
+		CustomPlayerController->SetInputMode(InputMode);
+		this->RemoveFromParent();
+	}
+}
+
+void UPuzzleAnswerSheet::OnQuitButtonClicked()
+{
 	AJtcPlayerController* CustomPlayerController = Cast<AJtcPlayerController>(GetOwningPlayer());
 	if (CustomPlayerController)
 	{

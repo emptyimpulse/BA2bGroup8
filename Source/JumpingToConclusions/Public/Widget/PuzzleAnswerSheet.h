@@ -30,7 +30,11 @@ protected:
 	UPROPERTY(Meta = (BindWidget))
 	UButton* AnswerButton;
 
+	UPROPERTY(Meta = (BindWidget))
+	UButton* QuitButton;
+
 	UFUNCTION(BlueprintCallable)
 	void OnAnswerButtonClicked(int32 SubmittedAnswer);
+	void OnQuitButtonClicked();
 	virtual void NativeConstruct() override;
 };
