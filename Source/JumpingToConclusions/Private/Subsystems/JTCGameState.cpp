@@ -3,6 +3,7 @@
 
 #include "Subsystems/JTCGameState.h"
 
+#include "JtcPlayerController.h"
 #include "GameModes/LobbyGameModeBase.h"
 #include "JumpingToConclusions/JumpingToConclusionsGameMode.h"
 #include "Kismet/GameplayStatics.h"
@@ -41,6 +42,21 @@ void AJTCGameState::OnRep_OnMatchStateChange()
 void AJTCGameState::OnRep_OnVariableRepTest()
 {
 	PrintString(FString::Printf(TEXT("Server GameState %d"), VariableRepTest));
+}
+
+void AJTCGameState::NetMuticastEndGame_Implementation()
+{
+	for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
+	{
+		APlayerController* IteraionPC= Iterator->Get();
+		if (IteraionPC && IteraionPC->IsLocalController())
+		{
+			if (AJtcPlayerController* CustomPC = Cast<AJtcPlayerController>(IteraionPC) )
+			{
+				
+			}
+		}
+	}
 }
 
 //----------------------------------------------------------------------------------------------------//

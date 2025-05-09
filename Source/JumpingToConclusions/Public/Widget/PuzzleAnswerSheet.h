@@ -35,6 +35,7 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void OnAnswerButtonClicked(int32 SubmittedAnswer);
+	UFUNCTION(BlueprintCallable)
 	void OnQuitButtonClicked();
 	virtual void NativeConstruct() override;
 };

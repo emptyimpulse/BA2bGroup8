@@ -31,6 +31,9 @@ public:
 	UFUNCTION()
 	void OnRep_OnVariableRepTest();
 
+	UFUNCTION(NetMulticast, reliable)
+	void NetMuticastEndGame();
+
 	UFUNCTION(BlueprintCallable,Category="Game Score")
 	void AddSolvedPuzzleScore(bool bWasSuccessfull);
 

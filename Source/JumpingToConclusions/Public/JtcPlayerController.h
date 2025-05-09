@@ -23,6 +23,8 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	void ShowEndGameWidget();
+
 	
 	
 };
