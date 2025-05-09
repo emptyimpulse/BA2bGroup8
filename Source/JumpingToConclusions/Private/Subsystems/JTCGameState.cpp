@@ -3,13 +3,11 @@
 
 #include "Subsystems/JTCGameState.h"
 
-#include "GameFramework/GameSession.h"
 #include "GameModes/LobbyGameModeBase.h"
 #include "JumpingToConclusions/JumpingToConclusionsGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "Managers/PuzzleSpawnManager.h"
 #include "Net/UnrealNetwork.h"
-#include "Subsystems/JtCGameInstance.h"
 #include "Subsystems/JtcPlayerStates.h"
 
 AJTCGameState::AJTCGameState()
@@ -115,11 +113,13 @@ void AJTCGameState::AddSolvedPuzzleScore(bool bWasSuccessfull)
 	{
 		if (bWasSuccessfull)
 		{
+			TotalPuzzles++;
 			SolvedPuzzles += 1;
 			PrintString(FString::Printf(TEXT("SolverScore: %d"), SolvedPuzzles));
 		}
 		else
 		{
+			TotalPuzzles++;
 			FailedPuzzles += 1;
 			PrintString(FString::Printf(TEXT("TraitorScore: %d"), FailedPuzzles));
 		}
@@ -132,30 +132,47 @@ void AJTCGameState::CheckIfAllPuzzlesSolved()
 {
 	if (HasAuthority())
 	{
-		if (SolvedPuzzles == 3)
+		if (TotalPuzzles == 3)
 		{
-			PrintString(FString::Printf(TEXT("Solvers Have Won With: %d"), SolvedPuzzles));
-			SolvedPuzzles = 0;
-			RoundNumber += 1;
-			AJumpingToConclusionsGameMode* CurrentGameMode = Cast<AJumpingToConclusionsGameMode>(
-				GetWorld()->GetAuthGameMode());
-			if (CurrentGameMode && RoundNumber <= 3)
+			if (SolvedPuzzles == 2)
 			{
-				//CurrentGameMode->TeleportPlayersToSpawnLocations();
-				APuzzleSpawnManager* PuzzleSpawnManager = Cast<APuzzleSpawnManager>(
-					UGameplayStatics::GetActorOfClass(GetWorld(), APuzzleSpawnManager::StaticClass()));
-				PuzzleSpawnManager->SpawnRandomPuzzles();
-				CreatePuzzleAnswers();
+				PrintString(FString::Printf(TEXT("Solvers Have Won With: %d"), SolvedPuzzles));
+				SolvedPuzzles = 0;
+				RoundNumber += 1;
+				AJumpingToConclusionsGameMode* CurrentGameMode = Cast<AJumpingToConclusionsGameMode>(
+					GetWorld()->GetAuthGameMode());
+				if (CurrentGameMode && RoundNumber <= 3)
+				{
+					//CurrentGameMode->TeleportPlayersToSpawnLocations();
+					APuzzleSpawnManager* PuzzleSpawnManager = Cast<APuzzleSpawnManager>(
+						UGameplayStatics::GetActorOfClass(GetWorld(), APuzzleSpawnManager::StaticClass()));
+					PuzzleSpawnManager->SpawnRandomPuzzles();
+					CreatePuzzleAnswers();
+				}
+				else
+				{
+					//TODO adjust this when hazel gives End Game widget
+					PrintString("Game End");
+				}
 			}
 			else
 			{
-				PrintString("Game End");
+				PrintString(FString::Printf(TEXT("Traitors Have Won With: %d"), FailedPuzzles));
+				AJumpingToConclusionsGameMode* CurrentGameMode = Cast<AJumpingToConclusionsGameMode>(
+					GetWorld()->GetAuthGameMode());
+				if (CurrentGameMode && RoundNumber <= 3)
+				{
+					//CurrentGameMode->TeleportPlayersToSpawnLocations();
+					APuzzleSpawnManager* PuzzleSpawnManager = Cast<APuzzleSpawnManager>(
+						UGameplayStatics::GetActorOfClass(GetWorld(), APuzzleSpawnManager::StaticClass()));
+					PuzzleSpawnManager->SpawnRandomPuzzles();
+					CreatePuzzleAnswers();
+				}
+				else
+				{
+					PrintString("Game End");
+				}
 			}
-		}
-		else if (FailedPuzzles == 5)
-		{
-			PrintString(FString::Printf(TEXT("Traitors Have Won With: %d"), FailedPuzzles));
-			
 		}
 	}
 }

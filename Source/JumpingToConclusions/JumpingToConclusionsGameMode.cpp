@@ -132,10 +132,12 @@ void AJumpingToConclusionsGameMode::CheckIfTraitorCorrect(APlayerState* ChosenPl
 {
 	if (TraitorList[0] == ChosenPlayerController->GetPlayerController())
 	{
+		//TODO Show endgame screen if Won
 		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, "Well Done You Have Found the Traitor");
 	}
 	else
 	{
+		//TODO Show endgame screen if lost
 		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, "No you have lost");
 	}
 }

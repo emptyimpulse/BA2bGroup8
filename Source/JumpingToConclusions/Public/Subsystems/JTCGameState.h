@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameStateBase.h"
 #include "Data/MatchStateEnums.h"
-#include "JumpingToConclusions/JumpingToConclusionsCharacter.h"
 #include "JTCGameState.generated.h"
 
 class AJtcPlayerStates;
@@ -71,6 +70,9 @@ protected:
 	
 	UPROPERTY(Replicated,BlueprintReadOnly,VisibleAnywhere,Category="Game Score")
 	int32 FailedPuzzles = 0;
+
+	UPROPERTY(Replicated,BlueprintReadOnly,VisibleAnywhere,Category="Game Score")
+	int32 TotalPuzzles = 0;
 
 	UPROPERTY(Replicated,BlueprintReadOnly,VisibleAnywhere,Category="Game Score")
 	int32 RoundNumber = 0;
