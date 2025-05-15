@@ -10,6 +10,7 @@
 #include "Managers/PuzzleSpawnManager.h"
 #include "Net/UnrealNetwork.h"
 #include "Subsystems/JtcPlayerStates.h"
+#include "World/PointDisplayActor.h"
 
 AJTCGameState::AJTCGameState()
 {
@@ -30,7 +31,7 @@ void AJTCGameState::PrintString(const FString& Str)
 {
 	if (GEngine)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Cyan, Str);
+		
 	}
 }
 
@@ -85,21 +86,18 @@ void AJTCGameState::CheckAllPlayersReady()
 	}
 }
 
-void AJTCGameState::GetPlayersForObserverCube()
+
+void AJTCGameState::OnRep_OnPuzzleControllersChange()
 {
-	if (HasAuthority())
-	{
-		const AJumpingToConclusionsGameMode* CurrentGameMode = Cast<AJumpingToConclusionsGameMode>(
-			GetWorld()->GetAuthGameMode());
-		if (CurrentGameMode)
-		{
-			PuzzlersControllers.Add(CurrentGameMode->TraitorList[0]->GetPlayerState<APlayerState>());
-			PuzzlersControllers.Add(CurrentGameMode->SolverList[0]->GetPlayerState<APlayerState>());
-			PuzzlersControllers.Add(CurrentGameMode->SolverList[1]->GetPlayerState<APlayerState>());
-			
-			OnObserverDelegate.Broadcast();
-		}
-	}
+}
+
+
+void AJTCGameState::OnRep_OnPointChange()
+{
+	APointDisplayActor* PointDisplay = Cast<APointDisplayActor>(
+	UGameplayStatics::GetActorOfClass(GetWorld(), APointDisplayActor::StaticClass()));
+
+	PointDisplay->UpdateScoreOnDisplay();
 }
 
 
@@ -131,13 +129,13 @@ void AJTCGameState::AddSolvedPuzzleScore(bool bWasSuccessfull)
 		{
 			TotalPuzzles++;
 			SolvedPuzzles += 1;
-			PrintString(FString::Printf(TEXT("SolverScore: %d"), SolvedPuzzles));
+			OnRep_OnPointChange();
 		}
 		else
 		{
 			TotalPuzzles++;
 			FailedPuzzles += 1;
-			PrintString(FString::Printf(TEXT("TraitorScore: %d"), FailedPuzzles));
+			OnRep_OnPointChange();
 		}
 		CheckIfAllPuzzlesSolved();
 	}
@@ -204,7 +202,6 @@ void AJTCGameState::CreatePuzzleAnswers()
 			int32 RandomGeneratedAnswer = SRand.RandRange(111111, 999999);
 
 			AnswerSheet[i] = RandomGeneratedAnswer;
-			PrintString(FString::Printf(TEXT("Puzzle Answer at index %d %d"), i, AnswerSheet[i]));
 		}
 	}
 }
@@ -221,4 +218,5 @@ void AJTCGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(AJTCGameState, FailedPuzzles)
 	DOREPLIFETIME(AJTCGameState, AnswerSheet)
 	DOREPLIFETIME(AJTCGameState, PuzzlersControllers)
+	DOREPLIFETIME(AJTCGameState, PuzzlersAdded)
 }

@@ -45,8 +45,9 @@ public:
 
 	void CheckAllPlayersReady();
 
-	void GetPlayersForObserverCube();
-
+	UFUNCTION()
+	void OnRep_OnPointChange();
+	
 	UPROPERTY(ReplicatedUsing  = OnRep_OnMatchStateChange)
 	EMatchState OnMatchState = EMatchState::BeginMatch;
 	
@@ -57,28 +58,38 @@ public:
 
 	void CreatePuzzleAnswers();
 
-	UPROPERTY(Replicated,BlueprintReadOnly)
-	TArray<APlayerState*> PuzzlersControllers;
+	UFUNCTION()
+	void OnRep_OnPuzzleControllersChange();
 
+	UPROPERTY(Replicated)
+	TArray<APlayerState*> PuzzlersControllers;
+	
 	FObserverCubeDelegate OnObserverDelegate;
+	
+	UPROPERTY(ReplicatedUsing = OnRep_OnPuzzleControllersChange,BlueprintReadOnly)
+	int32 PuzzlersAdded = 0;
+	
+	UPROPERTY(ReplicatedUsing= OnRep_OnPointChange,BlueprintReadOnly,VisibleAnywhere,Category="Game Score")
+	int32 SolvedPuzzles = 0;
+	
+	UPROPERTY(ReplicatedUsing= OnRep_OnPointChange,BlueprintReadOnly,VisibleAnywhere,Category="Game Score")
+	int32 FailedPuzzles = 0;
+	
 protected: 
 
 	virtual void BeginPlay() override;
 
 	UPROPERTY(ReplicatedUsing = OnRep_OnVariableRepTest ,BlueprintReadOnly)
 	int VariableRepTest;
-
-	UPROPERTY(Replicated,BlueprintReadOnly,VisibleAnywhere,Category="Game Score")
-	int32 SolvedPuzzles = 0;
 	
-	UPROPERTY(Replicated,BlueprintReadOnly,VisibleAnywhere,Category="Game Score")
-	int32 FailedPuzzles = 0;
-
 	UPROPERTY(Replicated,BlueprintReadOnly,VisibleAnywhere,Category="Game Score")
 	int32 TotalPuzzles = 0;
 
 	UPROPERTY(Replicated,BlueprintReadOnly,VisibleAnywhere,Category="Game Score")
 	int32 RoundNumber = 0;
 
+	
 	int64 DateInSeconds;
 };
+
+

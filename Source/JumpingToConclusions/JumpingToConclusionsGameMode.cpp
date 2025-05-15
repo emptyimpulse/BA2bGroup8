@@ -2,6 +2,7 @@
 
 #include "JumpingToConclusionsGameMode.h"
 
+#include "JtcPlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "Managers/ObserverGuessingCube.h"
 #include "Managers/PuzzleSpawnManager.h"
@@ -77,7 +78,7 @@ void AJumpingToConclusionsGameMode::ShuffleAllPlayers()
 
 	AJTCGameState* CustomGameState = GetGameState<AJTCGameState>();
 	CustomGameState->CreatePuzzleAnswers();
-	CustomGameState->GetPlayersForObserverCube();
+	GetPlayersForObserverCube();
 
 	AObserverGuessingCube* ObserverSpawnManager = Cast<AObserverGuessingCube>(
 	UGameplayStatics::GetActorOfClass(GetWorld(), AObserverGuessingCube::StaticClass()));
@@ -95,6 +96,8 @@ void AJumpingToConclusionsGameMode::TestShuffle()
 			                                 TEXT("CurrentGameController %s"), *PlayerControllerList[i]->GetName()));
 	}
 }
+
+
 
 void AJumpingToConclusionsGameMode::TeleportPlayersToSpawnLocations()
 {
@@ -139,6 +142,21 @@ void AJumpingToConclusionsGameMode::CheckIfTraitorCorrect(APlayerState* ChosenPl
 	{
 		//TODO Show endgame screen if lost
 		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, "No you have lost");
+	}
+}
+
+void AJumpingToConclusionsGameMode::GetPlayersForObserverCube()
+{
+	if (HasAuthority())
+	{
+		const AJumpingToConclusionsGameMode* CurrentGameMode = Cast<AJumpingToConclusionsGameMode>(
+			GetWorld()->GetAuthGameMode());
+		if (CurrentGameMode)
+		{
+			PuzzlersControllers.Add(CurrentGameMode->TraitorList[0]->GetPlayerState<APlayerState>());
+			PuzzlersControllers.Add(CurrentGameMode->SolverList[0]->GetPlayerState<APlayerState>());
+			PuzzlersControllers.Add(CurrentGameMode->SolverList[1]->GetPlayerState<APlayerState>());
+		}
 	}
 }
 

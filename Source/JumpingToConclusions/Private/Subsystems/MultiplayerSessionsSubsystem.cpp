@@ -18,10 +18,7 @@ UMultiplayerSessionsSubsystem::UMultiplayerSessionsSubsystem()
 
 void UMultiplayerSessionsSubsystem::PrintString(const FString& Str)
 {
-	if(GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1,15.0f,FColor::Cyan,Str);
-	}
+
 }
 
 

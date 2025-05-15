@@ -4,6 +4,7 @@
 #include "Subsystems/JtcPlayerStates.h"
 
 #include "JtcPlayerController.h"
+#include "JumpingToConclusions/JumpingToConclusionsCharacter.h"
 #include "Net/UnrealNetwork.h"
 #include "Subsystems/JtCGameInstance.h"
 #include "Subsystems/JTCGameState.h"
@@ -18,6 +19,8 @@ void AJtcPlayerStates::PostInitializeComponents()
 	{
 		CustomPlayerController->Server_SetPlayerName(PlayerName);
 	}
+	
+	
 }
 
 

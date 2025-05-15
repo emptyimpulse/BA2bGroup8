@@ -38,18 +38,14 @@ void AObeserverGuessingActor::BeginPlay()
 
 void AObeserverGuessingActor::SetPlayerChosenIndex()
 {
-	AJTCGameState* CustomGameState = GetWorld()->GetGameStateChecked<AJTCGameState>();
-	PlayerNameDisplay->SetText(FText::FromString(
-		"Player: "+ ChosenPlayerController->GetName()));
+	PlayerNameDisplay->SetText(FText::FromString(""+ ChosenPlayerController->GetPlayerName()));
 	
-	GEngine->AddOnScreenDebugMessage(-1,5.0f,FColor::Purple,ChosenPlayerController->GetName());
 }
 
 void AObeserverGuessingActor::Interact_Implementation(AJumpingToConclusionsCharacter* InstigatingPlayer)
 {
 	if (ChosenPlayerController != nullptr)
 	{
-		GEngine->AddOnScreenDebugMessage(-1,5.0f,FColor::Purple,ChosenPlayerController->GetName());
 		AJumpingToConclusionsCharacter* PC = InstigatingPlayer;
 		if (PC)
 		{
@@ -61,6 +57,11 @@ void AObeserverGuessingActor::Interact_Implementation(AJumpingToConclusionsChara
 		GEngine->AddOnScreenDebugMessage(-1,5.0f,FColor::Purple,"ChosenPlayerIsNull");
 	}
 	
+}
+
+void AObeserverGuessingActor::OnRep_PlayerControllerChange()
+{
+	PlayerNameDisplay->SetText(FText::FromString(""+ ChosenPlayerController->GetPlayerName()));
 }
 
 void AObeserverGuessingActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

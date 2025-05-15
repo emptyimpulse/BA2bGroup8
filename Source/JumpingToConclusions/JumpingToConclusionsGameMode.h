@@ -23,6 +23,8 @@ public:
 	void TeleportPlayersToSpawnLocations();
 
 	void CheckIfTraitorCorrect(APlayerState* ChosenPlayerController);
+
+	void GetPlayersForObserverCube();
 	//--------------------------------------------------------------------------------------------------------------//
 	//--------------------------------------------------PROPERTIES--------------------------------------------------//
 	//--------------------------------------------------------------------------------------------------------------//
@@ -36,6 +38,8 @@ public:
 	TArray<APlayerController*> SolverList;
 	UPROPERTY(BlueprintReadOnly)
 	TArray<APlayerController*> TraitorList;
+	
+	TArray<APlayerState*> PuzzlersControllers;
 	
 	UPROPERTY()
 	int8 SolvedPuzzles = 0;

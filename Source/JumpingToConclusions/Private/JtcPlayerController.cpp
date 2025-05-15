@@ -9,10 +9,6 @@
 void AJtcPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	if (AJumpingToConclusionsCharacter* PC = Cast<AJumpingToConclusionsCharacter>(GetPawn()))
-	{
-		PC->SetName();
-	}
 }
 void AJtcPlayerController::Server_SetPlayerName_Implementation(const FString& Name)
 {

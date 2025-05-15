@@ -28,16 +28,19 @@ public:
 	UPROPERTY(EditAnywhere)
 	USphereComponent* InteractDistance;
 	
-	UPROPERTY(Replicated)
+	UPROPERTY(ReplicatedUsing = OnRep_PlayerControllerChange)
 	APlayerState* ChosenPlayerController;
+
+	UFUNCTION()
+	void OnRep_PlayerControllerChange();
 	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	
-protected:
-	virtual void BeginPlay() override;
 
 	UFUNCTION()
 	void SetPlayerChosenIndex();
+	
+protected:
+	virtual void BeginPlay() override;
 
 public:
 	virtual void Interact_Implementation(AJumpingToConclusionsCharacter* InstigatingPlayer) override;

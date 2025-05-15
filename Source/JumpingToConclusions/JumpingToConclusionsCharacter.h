@@ -117,6 +117,8 @@ public:
 	void DropItem();
 
 	void FoundInteractable(AActor* FoundInteractableActor);
+
+	virtual void OnRep_PlayerState() override;
 	
 	FTimerHandle SpawnTimer;
 };

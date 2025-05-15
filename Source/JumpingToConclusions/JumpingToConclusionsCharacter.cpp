@@ -12,6 +12,7 @@
 #include "InputActionValue.h"
 #include "JumpingToConclusionsGameMode.h"
 #include "Components/TextRenderComponent.h"
+#include "GameFramework/PlayerState.h"
 #include "Interfaces/InteractionInterface.h"
 #include "PhysicsEngine/PhysicsHandleComponent.h"
 #include "Subsystems/JTCGameState.h"
@@ -73,12 +74,29 @@ void AJumpingToConclusionsCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
+	if (HasAuthority())
+	{
+		// Only on server
+		FTimerHandle TimerHandle;
+		GetWorldTimerManager().SetTimer(TimerHandle, this, &AJumpingToConclusionsCharacter::SetName, 0.2f, false);
+	}
 }
 
+void AJumpingToConclusionsCharacter::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+	
+	SetName();
+}
 
 void AJumpingToConclusionsCharacter::SetName()
 {
-	PlayerName->SetText(FText::FromString(GetController()->GetName()));
+	APlayerState* PS = GetPlayerState();
+	if (PS && PlayerName)
+	{
+		PlayerName->SetText(FText::FromString(PS->GetPlayerName()));
+	}
+	
 }
 
 
@@ -167,6 +185,7 @@ void AJumpingToConclusionsCharacter::ServerPickTraitor_Implementation(APlayerSta
 		}
 	}
 }
+
 void AJumpingToConclusionsCharacter::Pickup()
 {
 
@@ -212,11 +231,10 @@ void AJumpingToConclusionsCharacter::FoundInteractable(AActor* FoundInteractable
 }
 
 
+
 //Server RPC Implementation, can be called by the client.
 void AJumpingToConclusionsCharacter::ServerAnswerToPuzzle_Implementation(int32 SubmittedAnswer,int32 AnswerIndex)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red,
-FString::Printf(TEXT("AnswerInput %d"), SubmittedAnswer));
 	if (AJTCGameState* CustomGameState = Cast<AJTCGameState>(GetWorld()->GetGameState()))
 	{
 		if (CustomGameState->AnswerSheet[AnswerIndex] == SubmittedAnswer)

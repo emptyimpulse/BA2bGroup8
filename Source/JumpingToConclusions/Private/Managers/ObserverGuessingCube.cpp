@@ -3,6 +3,7 @@
 
 #include "Managers/ObserverGuessingCube.h"
 
+#include "JumpingToConclusions/JumpingToConclusionsGameMode.h"
 #include "World/ObeserverGuessingActor.h"
 
 // Sets default values
@@ -54,7 +55,6 @@ void AObserverGuessingCube::SpawnObserverTraitorPickers()
 			RandomPuzzleSpawn[j] = temp;
 		}
 
-		AJTCGameState* CurrentGameState =  GetWorld()->GetGameStateChecked<AJTCGameState>();
 		if (SpawnedTraitorPickers.Num() != 0)
 		{
 			for (AObeserverGuessingActor* SpawnedActor : SpawnedTraitorPickers)
@@ -78,11 +78,13 @@ void AObserverGuessingCube::SpawnObserverTraitorPickers()
 			AObeserverGuessingActor* TraitorPicker = GetWorld()->SpawnActor<AObeserverGuessingActor>(
 				ObeserverGuessingActorClass,
 				SpawnLocations[i]->GetComponentLocation(),
-				FRotator::ZeroRotator,
+				SpawnLocations[i]->GetComponentRotation() ,
 				SpawnParams);
 
-			APlayerState* SpecificController = CurrentGameState->PuzzlersControllers[RandomPuzzleSpawn[i]];
+			AJumpingToConclusionsGameMode* CurrentGM = Cast<AJumpingToConclusionsGameMode>(GetWorld()->GetAuthGameMode());
+			APlayerState* SpecificController = CurrentGM->PuzzlersControllers[RandomPuzzleSpawn[i]];
 			TraitorPicker->ChosenPlayerController = SpecificController;
+			TraitorPicker->SetPlayerChosenIndex();
 			SpawnedTraitorPickers.Add(TraitorPicker);
 		}
 	}

@@ -10,11 +10,11 @@ void AMainMenuGameMode::PostLogin(APlayerController* NewPlayer)
 	Super::PostLogin(NewPlayer);
 	
 	
-	UJtCGameInstance* GI = Cast<UJtCGameInstance>(GetGameInstance());
-	if (GI)
-	{
-		FString TempName = TEXT("Null"); 
-		GI->SetPlayerName(NewPlayer->GetUniqueID(), TempName);
-	}
+	// UJtCGameInstance* GI = Cast<UJtCGameInstance>(GetGameInstance());
+	// if (GI)
+	// {
+	// 	FString TempName = TEXT("Null"); 
+	// 	GI->SetPlayerName(NewPlayer->GetUniqueID(), TempName);
+	// }
 	
 }
