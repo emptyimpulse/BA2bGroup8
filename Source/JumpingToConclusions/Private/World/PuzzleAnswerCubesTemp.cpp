@@ -55,7 +55,6 @@ void APuzzleAnswerCubesTemp::Interact_Implementation(AJumpingToConclusionsCharac
 		{
 			if (IsValid(WidgetReference))
 			{
-				GEngine->AddOnScreenDebugMessage(-1,2.0f,FColor::Red,"Showing OnScreen");
 
 				ShowOnPlayerScreen(PlayerCont);
 			}

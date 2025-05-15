@@ -186,6 +186,25 @@ void AJumpingToConclusionsCharacter::ServerPickTraitor_Implementation(APlayerSta
 	}
 }
 
+void AJumpingToConclusionsCharacter::ShowTraitorDisplay_Implementation()
+{
+	if (APlayerController* PController = Cast<APlayerController>(GetController()))
+	{
+		TraitorWidget = CreateWidget<Utraitorwidget>(PController, TraitorWidgetClass);
+		if (TraitorWidget)
+		{
+			TraitorWidget->AddToPlayerScreen();
+			GetWorld()->GetTimerManager().SetTimer(TraitorWidgetTimeHandle, this, &AJumpingToConclusionsCharacter::HideTraitorDisplay, 5.0f, false);
+		}
+	}
+}
+
+void AJumpingToConclusionsCharacter::HideTraitorDisplay()
+{
+	TraitorWidget->RemoveFromParent();
+}
+
+
 void AJumpingToConclusionsCharacter::Pickup()
 {
 

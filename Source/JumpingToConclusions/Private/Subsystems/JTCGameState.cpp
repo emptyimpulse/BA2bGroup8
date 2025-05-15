@@ -54,7 +54,7 @@ void AJTCGameState::NetMuticastEndGame_Implementation()
 		{
 			if (AJtcPlayerController* CustomPC = Cast<AJtcPlayerController>(IteraionPC) )
 			{
-				
+				CustomPC->ShowEndGameWidget();
 			}
 		}
 	}
@@ -166,7 +166,7 @@ void AJTCGameState::CheckIfAllPuzzlesSolved()
 				else
 				{
 					//TODO adjust this when hazel gives End Game widget
-					PrintString("Game End");
+					NetMuticastEndGame();
 				}
 			}
 			else
@@ -184,7 +184,7 @@ void AJTCGameState::CheckIfAllPuzzlesSolved()
 				}
 				else
 				{
-					PrintString("Game End");
+					NetMuticastEndGame();
 				}
 			}
 		}
@@ -204,6 +204,7 @@ void AJTCGameState::CreatePuzzleAnswers()
 			AnswerSheet[i] = RandomGeneratedAnswer;
 		}
 	}
+	NetMuticastEndGame();
 }
 
 

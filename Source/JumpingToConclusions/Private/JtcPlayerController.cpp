@@ -5,6 +5,7 @@
 
 #include "JumpingToConclusions/JumpingToConclusionsCharacter.h"
 #include "Subsystems/JtCGameInstance.h"
+#include "Widget/Endofgamewidget.h"
 
 void AJtcPlayerController::BeginPlay()
 {
@@ -21,7 +22,14 @@ void AJtcPlayerController::Server_SetPlayerName_Implementation(const FString& Na
 
 void AJtcPlayerController::ShowEndGameWidget()
 {
-	
+	if (EndOfGameWidgetClass)
+	{
+		EndOfGameWidget = CreateWidget<UEndofgamewidget>(this,EndOfGameWidgetClass);
+		if (EndOfGameWidget)
+		{
+			EndOfGameWidget->AddToViewport();
+		}
+	}
 }
 
 

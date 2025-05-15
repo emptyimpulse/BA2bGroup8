@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "Widget/Endofgamewidget.h"
 #include "JtcPlayerController.generated.h"
 
 /**
@@ -25,6 +26,9 @@ protected:
 public:
 	void ShowEndGameWidget();
 
-	
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UEndofgamewidget> EndOfGameWidgetClass;
+
+	UEndofgamewidget* EndOfGameWidget;
 	
 };

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameStateBase.h"
 #include "Data/MatchStateEnums.h"
+#include "Widget/Endofgamewidget.h"
 #include "JTCGameState.generated.h"
 
 class AJtcPlayerStates;

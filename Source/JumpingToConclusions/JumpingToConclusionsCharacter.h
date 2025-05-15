@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
 #include "NiagaraFunctionLibrary.h"
+#include "Widget/traitorwidget.h"
 #include "JumpingToConclusionsCharacter.generated.h"
 
 class UPhysicsHandleComponent;
@@ -90,6 +91,12 @@ public:
 
 	UFUNCTION()
 	void SetName();
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<Utraitorwidget> TraitorWidgetClass;
+
+	UPROPERTY()
+	Utraitorwidget* TraitorWidget;
 	
 	UPROPERTY(EditAnywhere)
 	UStaticMesh* SphereMesh;
@@ -105,6 +112,11 @@ public:
 
 	UPROPERTY(editAnywhere)
 	UPhysicsHandleComponent* PhysicsHandleComponent;
+
+	UFUNCTION(Client, Reliable)
+	void ShowTraitorDisplay();
+	
+	void HideTraitorDisplay();
 	
 	void Pickup(); 
 	
@@ -121,4 +133,5 @@ public:
 	virtual void OnRep_PlayerState() override;
 	
 	FTimerHandle SpawnTimer;
+	FTimerHandle TraitorWidgetTimeHandle;
 };

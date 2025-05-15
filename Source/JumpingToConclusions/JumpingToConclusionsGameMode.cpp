@@ -85,6 +85,12 @@ void AJumpingToConclusionsGameMode::ShuffleAllPlayers()
 	ObserverSpawnManager->SpawnObserverTraitorPickers();
 	//Player Management
 	TeleportPlayersToSpawnLocations();
+
+	AJumpingToConclusionsCharacter* CustomPC = Cast<AJumpingToConclusionsCharacter>(TraitorList[0]->GetPawn());
+	if (CustomPC)
+	{
+		CustomPC->ShowTraitorDisplay();
+	}
 }
 
 void AJumpingToConclusionsGameMode::TestShuffle()
@@ -133,15 +139,21 @@ void AJumpingToConclusionsGameMode::TeleportPlayersToSpawnLocations()
 
 void AJumpingToConclusionsGameMode::CheckIfTraitorCorrect(APlayerState* ChosenPlayerController)
 {
+	AJTCGameState* GS = GetWorld()->GetGameState<AJTCGameState>();
 	if (TraitorList[0] == ChosenPlayerController->GetPlayerController())
 	{
 		//TODO Show endgame screen if Won
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, "Well Done You Have Found the Traitor");
+		if (GS)
+		{
+			GS->NetMuticastEndGame();
+		}
 	}
 	else
 	{
-		//TODO Show endgame screen if lost
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, "No you have lost");
+		if (GS)
+		{
+			GS->NetMuticastEndGame();
+		}
 	}
 }
 
